@@ -6,6 +6,16 @@ using System.Web;
 
 namespace ProsjektoppgaveNettbank.Models
 {
+    public class Admin
+    {
+        [Display(Name = "ID")]
+        [Required(ErrorMessage = "ID må oppgis")]
+        public string ID { get; set; }
+        [Display(Name = "Password")]
+        [Required(ErrorMessage = "Password must be present")]
+        public string adminpassword { get; set; }
+    }
+
     public class Customer
     {
         [Display(Name = "National ID")]
