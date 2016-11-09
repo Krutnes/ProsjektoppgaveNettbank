@@ -29,7 +29,7 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult BankIndex(Customer customer)
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             if (bankBLL.isLoginCorrect(customer))
             {
                 Session["LoggedIn"] = true;
@@ -44,7 +44,7 @@ namespace ProsjektoppgaveNettbank.Controllers
 
         public ActionResult RegisterCustomer()
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             bankBLL.populateDatabase();
             return View();
         }
@@ -70,7 +70,7 @@ namespace ProsjektoppgaveNettbank.Controllers
                 bool LoggedIn = (bool)Session["LoggedIn"];
                 if (LoggedIn)
                 {
-                    var bankBLL = new BankDAL();
+                    var bankBLL = new BankBLL();
                     RegisteredPayment payment = bankBLL.findRegisteredPayment(Convert.ToInt32(id));
                     return View(payment);
                 }
@@ -153,6 +153,74 @@ namespace ProsjektoppgaveNettbank.Controllers
             Session["NID"] = null;
             return RedirectToAction("BankIndex", "Bank");
         }
+
+        public ActionResult AdminLogin()
+        {
+            if (Session["AdminLoggedIn"] == null)
+            {
+                Session["AdminLoggedIn"] = false;
+                ViewBag.AdminLoggedIn = false;
+            }
+            else
+            {
+                ViewBag.AdminLoggedIn = (bool)Session["AdminLoggedIn"];
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AdminLogin(Admin admin)
+        {
+            var bankBLL = new BankDAL();
+            if (bankBLL.isAdminLoginCorrect(admin))
+            {
+                Session["AdminLoggedIn"] = true;
+                ViewBag.AdminLoggedIn = true;
+                Session["ID"] = admin.ID;
+                return RedirectToAction("AdminOverview", "Bank");
+            }
+            Session["AdminLoggedIn"] = false;
+            ViewBag.AdminLoggedIn = false;
+            return View();
+        }
+
+        public ActionResult AdminOverview()
+        {
+            if (Session["AdminLoggedIn"] != null)
+            {
+                bool AdminLoggedIn = (bool)Session["AdminLoggedIn"];
+                if (AdminLoggedIn)
+                {
+                    var bankBLL = new BankDAL();
+                    List<Customer> alleKunder = bankBLL.allCustomer();
+                    return View(alleKunder);
+                }
+            }
+            return RedirectToAction("BankIndex", "Bank");
+        }
+        
+
+
+        public ActionResult AdminDeleteCustomer(string nID)
+        {
+            var bankBLL = new BankDAL();
+            Customer customer = (Customer) bankBLL.findCustomer(nID);
+            return View(customer);
+        }
+
+        [HttpPost]
+        public ActionResult AdminDeleteCustomer(Customer deleteCustomer)
+        {
+            var bankBLL = new BankDAL();
+            bool deleteOK = bankBLL.deleteCustomer(deleteCustomer.nID);
+            if (deleteOK)
+            {
+                return RedirectToAction("AdminOverview");
+            }
+            return View();
+        }
+
+        
 
     }
 }

@@ -141,6 +141,9 @@
     <Content Include="Views\Bank\AccountOverview.cshtml" />
     <Content Include="Views\Bank\EditPayment.cshtml" />
     <Content Include="Views\Bank\RegisterSinglePayment.cshtml" />
+    <Content Include="Views\Bank\AdminLogin.cshtml" />
+    <Content Include="Views\Bank\AdminOverview.cshtml" />
+    <Content Include="Views\Bank\AdminDeleteCustomer.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -153,9 +156,9 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DAL\DAL.csproj">
-      <Project>{18C328D2-E5A4-4D3E-B2C7-3415FE48A3D7}</Project>
-      <Name>DAL</Name>
+    <ProjectReference Include="..\BLL\BLL.csproj">
+      <Project>{38bbbb1f-5359-4811-a212-43ef49455b69}</Project>
+      <Name>BLL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{aa01e86d-3c21-43ce-afa7-96838a934758}</Project>

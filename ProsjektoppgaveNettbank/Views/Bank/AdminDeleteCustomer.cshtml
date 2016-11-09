@@ -1,0 +1,55 @@
+﻿@model ProsjektoppgaveNettbank.Models.Customer
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delete</title>
+</head>
+<body>
+    <br /><br />
+    <h3>Your are deleting a customer, are you sure?</h3>
+    <div>
+        <h4>Kunde</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.nID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.nID)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.firstName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.firstName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.lastName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.lastName)
+            </dd>
+
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete Customer" class="btn btn-danger" />
+                @Html.ActionLink("Back to overview", "AdminOverview", new { tom = "" }, new { @class = "btn btn-primary" })
+            </div>
+        }
+    </div>
+</body>
+</html>

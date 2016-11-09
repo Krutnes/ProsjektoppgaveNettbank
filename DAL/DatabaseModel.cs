@@ -9,6 +9,13 @@ using System.Web;
 
 namespace ProsjektoppgaveNettbank.Models
 {
+    public class DbAdmin
+    {
+        public string ID { get; set; }
+        public byte[] adminpassword { get; set; }
+        public string adminsalt { get; set; }
+    }
+
     public class DbCustomer
     {
         public string NID { get; set; }
@@ -73,6 +80,7 @@ namespace ProsjektoppgaveNettbank.Models
         {
             Database.CreateIfNotExists();
         }
+        public DbSet<DbAdmin> Admins { get; set; }
         public DbSet<DbCustomer> Customers { get; set; }
         public DbSet<DbAccount> Accounts { get; set; }
         public DbSet<DbRegisteredPayment> RegisteredPayments { get; set; }

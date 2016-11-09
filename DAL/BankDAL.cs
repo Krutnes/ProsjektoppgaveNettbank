@@ -202,9 +202,90 @@ namespace ProsjektoppgaveNettbank
             return randomString;
         }
 
+        public bool isAdminLoginCorrect(Admin admin)
+        {
+            using (var db = new BankDBContext())
+            {
+                DbAdmin adminFound = db.Admins.FirstOrDefault(c => c.ID.Equals(admin.ID));
+                if (adminFound != null)
+                {
+                    byte[] checkPassword = generateHash(admin.adminPassword + adminFound.adminsalt);
+                    bool validAdmin = adminFound.adminpassword.SequenceEqual(checkPassword);
+                    return validAdmin;
+                }
+                return false;
+            }
+        }
+
+        public List<Customer> allCustomer()
+        {
+            using (var db = new BankDBContext())
+            {
+                List<Customer> alleKunder = db.Customers.Select(k => new Customer()
+                {
+                    nID = k.NID,
+                    firstName = k.firstName,
+                    lastName = k.lastName,
+
+                }).ToList();
+
+                return alleKunder;
+            }
+        }
+
+        public bool deleteCustomer(string deleteId)
+        {
+            // FIKS :::::::::::::::::::::::::::::::::::::::::
+            var db = new BankDBContext();
+            try
+            {
+                DbCustomer deleteCustomer = db.Customers.Find(deleteId);
+                db.Customers.Remove(deleteCustomer);
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception feil)
+            {
+                return false;
+            }
+        }
+
+        public Customer findCustomer(string nID)
+        {
+            var db = new BankDBContext();
+
+            var foundCustomer = db.Customers.FirstOrDefault(pk => pk.NID.Equals(nID));
+
+            if (foundCustomer == null)
+            {
+                return null;
+            }
+            else
+            {
+                var customer = new Customer()
+                {
+                    nID = foundCustomer.NID,
+                    firstName = foundCustomer.firstName,
+                    lastName = foundCustomer.lastName
+                };
+                return customer;
+            }
+        }
+
         public void populateDatabase()
         {
             var db = new BankDBContext();
+            
+            // Admin 
+            DbAdmin dbAdmin1 = new DbAdmin
+            {
+                ID = "1111"
+            };
+            string adminSalt = generateSalt();
+            string adminpasswordAndSalt = "admin" + adminSalt;
+            byte[] adminhashedPassword = generateHash(adminpasswordAndSalt);
+            dbAdmin1.adminpassword = adminhashedPassword;
+            dbAdmin1.adminsalt = adminSalt;
 
             // Customer 1
             DbCustomer dbCustomer1 = new DbCustomer
@@ -319,6 +400,7 @@ namespace ProsjektoppgaveNettbank
 
             try
             {
+                db.Admins.Add(dbAdmin1);
                 db.Customers.Add(dbCustomer1);
                 db.Customers.Add(dbCustomer2);
                 db.Customers.Add(dbCustomer3);

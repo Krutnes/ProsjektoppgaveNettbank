@@ -75,6 +75,12 @@ namespace BLL
             BankDAL db = new BankDAL();
             db.populatePaymentTables();
         }
+
+        public Customer findCustomer(string nID)
+        {
+            BankDAL db = new BankDAL();
+            return db.findCustomer(nID);
+        }
     }
 
 }

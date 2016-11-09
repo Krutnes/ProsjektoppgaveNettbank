@@ -1,0 +1,50 @@
+﻿@model List<ProsjektoppgaveNettbank.Models.Customer>
+
+@{
+    ViewBag.Title = "AdminOverview";
+}
+
+<h2>AdminOverview</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model[0].nID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].firstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].lastName)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.nID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.firstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.lastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.password)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "AdminEditCustomer", new { id = item.nID }, new { @class = "btn btn-success" })
+                @Html.ActionLink("Customer accounts info", "AdminCustomerDetails", new { id = item.nID }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Delete", "AdminDeleteCustomer", new { id = item.nID }, new { @class = "btn btn-danger" })
+            </td>
+        </tr>
+    }
+
+</table>
