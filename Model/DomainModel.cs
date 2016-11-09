@@ -6,10 +6,7 @@ using System.Web;
 
 namespace ProsjektoppgaveNettbank.Models
 {
-    public int test
-    {
-       
-    }
+
     public class Admin
     {
         [Display(Name = "ID")]
@@ -19,6 +16,7 @@ namespace ProsjektoppgaveNettbank.Models
         [Required(ErrorMessage = "Password must be present")]
         public string adminpassword { get; set; }
         public int test2 { get; set; }
+        public int japple { get; set; }
     }
 
     public class Customer
