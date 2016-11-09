@@ -6,6 +6,10 @@ using System.Web;
 
 namespace ProsjektoppgaveNettbank.Models
 {
+    public int test
+    {
+       
+    }
     public class Admin
     {
         [Display(Name = "ID")]
