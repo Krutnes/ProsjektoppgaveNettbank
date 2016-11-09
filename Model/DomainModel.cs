@@ -18,6 +18,7 @@ namespace ProsjektoppgaveNettbank.Models
         [Display(Name = "Password")]
         [Required(ErrorMessage = "Password must be present")]
         public string adminpassword { get; set; }
+        public int test2 { get; set; }
     }
 
     public class Customer
