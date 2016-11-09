@@ -1,11 +1,11 @@
-﻿using ProsjektoppgaveNettbank.Models;
+﻿using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
 
-namespace ProsjektoppgaveNettbank
+namespace DAL
 {
     public class BankDAL
     {

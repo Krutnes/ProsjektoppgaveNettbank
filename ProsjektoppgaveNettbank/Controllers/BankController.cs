@@ -1,4 +1,5 @@
-﻿using ProsjektoppgaveNettbank.Models;
+﻿using BLL;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

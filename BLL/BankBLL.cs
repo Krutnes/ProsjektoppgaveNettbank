@@ -1,5 +1,5 @@
-﻿using ProsjektoppgaveNettbank;
-using ProsjektoppgaveNettbank.Models;
+﻿using DAL;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BLL
 {
-    class BankBLL
+    public class BankBLL
     {
         public List<Account> getCustomerAccounts(string nid)
         {

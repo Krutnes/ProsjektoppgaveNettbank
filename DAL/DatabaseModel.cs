@@ -7,7 +7,7 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Web;
 
-namespace ProsjektoppgaveNettbank.Models
+namespace Models
 {
     public class DbAdmin
     {
