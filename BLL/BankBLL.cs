@@ -81,6 +81,24 @@ namespace BLL
             BankDAL db = new BankDAL();
             return db.findCustomer(nID);
         }
+
+        public bool isAdminLoginCorrect(Admin admin)
+        {
+            BankDAL db = new BankDAL();
+            return db.isAdminLoginCorrect(admin);
+        }
+
+        public List<Customer> getAllCustomers()
+        {
+            BankDAL db = new BankDAL();
+            return db.getAllCustomers();
+        }
+
+        public bool deleteCustomer(string nID)
+        {
+            BankDAL db = new BankDAL();
+            return db.deleteCustomer(nID);
+        }
     }
 
 }

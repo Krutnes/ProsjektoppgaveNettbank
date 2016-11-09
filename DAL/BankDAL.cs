@@ -217,7 +217,7 @@ namespace DAL
             }
         }
 
-        public List<Customer> allCustomer()
+        public List<Customer> getAllCustomers()
         {
             using (var db = new BankDBContext())
             {
@@ -233,13 +233,12 @@ namespace DAL
             }
         }
 
-        public bool deleteCustomer(string deleteId)
+        public bool deleteCustomer(string nID)
         {
-            // FIKS :::::::::::::::::::::::::::::::::::::::::
             var db = new BankDBContext();
             try
             {
-                DbCustomer deleteCustomer = db.Customers.Find(deleteId);
+                DbCustomer deleteCustomer = db.Customers.FirstOrDefault(pk => pk.NID.Equals(nID));
                 db.Customers.Remove(deleteCustomer);
                 db.SaveChanges();
                 return true;

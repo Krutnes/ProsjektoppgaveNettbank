@@ -82,7 +82,7 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult EditPayment(RegisteredPayment registeredPayment)
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             if(!bankBLL.editPayment(registeredPayment))
                 return View(registeredPayment);
 
@@ -112,7 +112,7 @@ namespace ProsjektoppgaveNettbank.Controllers
                 return RedirectToAction("BankIndex", "Bank");
             }
             registeredPayment.accountNumberFrom = (string) Session["accountNumber"];
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             bankBLL.registerPayment(registeredPayment);
             ViewBag.AccountNumber = registeredPayment.accountNumberFrom;
             return RedirectToAction("AccountOverview", "Bank");
@@ -120,7 +120,7 @@ namespace ProsjektoppgaveNettbank.Controllers
 
         public string DeletePayment(string id)
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             string currentAccount = bankBLL.getRegisteredPaymentAccount(Convert.ToInt32(id));
 
             bankBLL.deletePayment(Convert.ToInt32(id));
@@ -131,7 +131,7 @@ namespace ProsjektoppgaveNettbank.Controllers
 
         public string getCustomerAccounts()
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             List<Account> allCustomerAccounts = bankBLL.getCustomerAccounts((String)Session["NID"]);
             var jsonSerializer = new JavaScriptSerializer();
             string json = jsonSerializer.Serialize(allCustomerAccounts);
@@ -140,7 +140,7 @@ namespace ProsjektoppgaveNettbank.Controllers
 
         public string getRegisteredPayments(string id)
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             List<RegisteredPayment> allRegisteredPayments = bankBLL.getRegisteredPayments(id);
             var jsonSerializer = new JavaScriptSerializer();
             string json = jsonSerializer.Serialize(allRegisteredPayments);
@@ -172,7 +172,7 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult AdminLogin(Admin admin)
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             if (bankBLL.isAdminLoginCorrect(admin))
             {
                 Session["AdminLoggedIn"] = true;
@@ -192,9 +192,9 @@ namespace ProsjektoppgaveNettbank.Controllers
                 bool AdminLoggedIn = (bool)Session["AdminLoggedIn"];
                 if (AdminLoggedIn)
                 {
-                    var bankBLL = new BankDAL();
-                    List<Customer> alleKunder = bankBLL.allCustomer();
-                    return View(alleKunder);
+                    var bankBLL = new BankBLL();
+                    List<Customer> allCustomers = bankBLL.getAllCustomers();
+                    return View(allCustomers);
                 }
             }
             return RedirectToAction("BankIndex", "Bank");
@@ -204,7 +204,7 @@ namespace ProsjektoppgaveNettbank.Controllers
 
         public ActionResult AdminDeleteCustomer(string nID)
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             Customer customer = (Customer) bankBLL.findCustomer(nID);
             return View(customer);
         }
@@ -212,7 +212,7 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult AdminDeleteCustomer(Customer deleteCustomer)
         {
-            var bankBLL = new BankDAL();
+            var bankBLL = new BankBLL();
             bool deleteOK = bankBLL.deleteCustomer(deleteCustomer.nID);
             if (deleteOK)
             {
