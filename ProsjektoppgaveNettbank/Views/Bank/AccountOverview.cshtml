@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AccountOversikt</title>
+</head>
+<script type="text/javascript">
+        $(function ()   // runs at page load
+        {
+            $.ajax(
+            {
+                url: '/Bank/getCustomerAccounts',
+                type: 'GET',
+                dataType: 'json',
+                success: function (accounts) {
+                        ShowAccountsDropdown(accounts);
+                    },
+                error: function (x, y, z) {
+                        alert(x + '\n' + y + '\n' + z);
+                    }
+            });
+
+            $("#accountsDropdown").change(function ()
+            {
+                var accountNumberFrom = $(this).val();
+                var url = "/Bank/RegisterSinglePayment/" + accountNumberFrom;
+                $("#register_single_payment").attr("href", url);
+                $("#register_single_payment").css("background-color", "#2780E3");
+                $.ajax({
+                        url: '/Bank/getRegisteredPayments/' + accountNumberFrom,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (registeredPayments)
+                    {
+
+                            ShowRegisteredPayments(registeredPayments);
+                        },
+                    error: function (x, y, z)
+                    {
+                            alert(x + '\n' + y + '\n' + z);
+                        }
+                    });
+                });
+
+            $("#registered_payments").on("click", ".deleteButton", (function ()
+            {
+                var id = $(this).attr('id');
+                $("#delete-payment-confirm").dialog(
+                {
+                    resizable: false,
+                    height: "auto",
+                    width: 400,
+                    modal: true,
+                    closeOnEscape: false,
+                    open: function(event, ui) {  // hides the close button in the top right corner
+                        $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                    },
+                    buttons:
+                    {
+                        "Delete payment": function ()
+                        {
+                            $.ajax(
+                            {
+                                url: "/Bank/DeletePayment/" + id,
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function (payments) {
+                                        ShowRegisteredPayments(payments);
+                                    },
+                                error: function (x, y, z) {
+                                        alert(x + '\n' + y + '\n' + z);
+                                    }
+                                });
+                            $(this).dialog("close");
+                        },
+                        "Don't delete": function ()
+                        {
+                            $(this).dialog("close");
+                        }
+                    } // end of buttons
+                }); // end of dialog
+            })); // end of on click
+
+        }) // end of page load
+
+        function ShowAccountsDropdown(accounts)
+        {
+            var out = "<option disabled selected>Choose account</option>";
+            for (var i in accounts) {
+                out += "<option value='" + accounts[i].accountNumber + "'>" +
+                    accounts[i].accountNumber + " (" + accounts[i].balance + " kr)</option>";
+            }
+            $("#accountsDropdown").append(out);
+        }
+
+        function ShowRegisteredPayments(registeredPayments)
+        {
+            var out = "<table id='registered_payments'>" +
+                "<tr>" +
+                    "<th>Payment to</th>" +
+                    "<th>Amount</th>" +
+                    "<th>Due date</th>" +
+                    "<th> </th>" +
+                    "<th> </th>" +
+                "</tr>";
+
+
+            var re = /-?\d+/;
+
+            for (var i in registeredPayments)
+            {
+                var paymentDate = registeredPayments[i].paymentDate;
+                var dateParse = re.exec(paymentDate);
+                var d = new Date(parseInt(dateParse[0]));
+                var paymentDateString = (d.getUTCDate() + 1) + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+                out +=
+                    "<tr>" +
+                        "<td>" + registeredPayments[i].accountNumberTo +
+                            " (" + registeredPayments[i].receiverName + ")" +
+                        "</td>" +
+                        "<td>" + registeredPayments[i].amount.toFixed(2) + " NOK</td>" +
+                        "<td>" + paymentDateString + "</td>" +
+                        "<td><a href='/Bank/EditPayment/" + registeredPayments[i].id + "' " +
+                            "class='btn btn-success'>Edit</a></td>" +
+                        "<td><button id='" + registeredPayments[i].id + "' " +
+                            "class='btn btn-success deleteButton'>Delete</button></td>" +
+                    "</tr>";
+            }
+            $("#registered_payments").html(out);
+        }
+
+</script>
+
+<body>
+    <select id="accountsDropdown"></select> 
+    <table id="registered_payments" class="table table-striped table-hover"></table>
+    <a href="" id="register_single_payment" bgcolor="grey" 
+       class="btn btn-success">Register single payment</a>
+    <div id="delete-payment-confirm" title="Delete registered payment?" hidden>
+        <p>Are you sure?</p>
+    </div>
+</body>
+</html>
