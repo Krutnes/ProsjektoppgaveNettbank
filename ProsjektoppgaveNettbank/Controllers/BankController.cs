@@ -201,12 +201,18 @@ namespace ProsjektoppgaveNettbank.Controllers
         }
         
 
-
-        public ActionResult AdminDeleteCustomer(string nID)
+        [HttpGet]
+        public JsonResult AdminDeleteCustomer(string id)
         {
             var bankBLL = new BankBLL();
-            Customer customer = (Customer) bankBLL.findCustomer(nID);
-            return View(customer);
+            Customer deleteCustomer = bankBLL.findCustomer(id);
+            bool deleteOK = bankBLL.deleteCustomer(id);
+            System.Diagnostics.Debug.WriteLine("SLETTET " + deleteOK);
+            if (deleteOK)
+            {
+                return Json(true);
+            }
+            return Json(false);
         }
 
         [HttpPost]

@@ -9,7 +9,7 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
+<table id="customers_table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model[0].nID)
@@ -40,11 +40,68 @@
                 @Html.DisplayFor(modelItem => item.password)
             </td>
             <td>
-                @Html.ActionLink("Edit", "AdminEditCustomer", new { id = item.nID }, new { @class = "btn btn-success" })
-                @Html.ActionLink("Customer accounts info", "AdminCustomerDetails", new { id = item.nID }, new { @class = "btn btn-primary" })
-                @Html.ActionLink("Delete", "AdminDeleteCustomer", new { id = item.nID }, new { @class = "btn btn-danger" })
-            </td>
-        </tr>
+                @Html.ActionLink("Edit", "AdminEditCustomer", new { nid = item.nID }, new { @class = "btn btn-success" })
+                @Html.ActionLink("Customer accounts info", "AdminCustomerDetails", new { nid = item.nID }, new { @class = "btn btn-primary" })
+                <button id="@item.nID" class="btn btn-danger deleteButton">Delete Customer</button>
+      </td>
+
+  </tr>
     }
+    
 
 </table>
+<div id="delete-customer-confirm" title="Delete registered payment?" hidden>
+    <p>Are you sure?</p>
+</div>
+
+<script type="text/javascript">
+    $(function()
+    {
+        $("#customers_table").on("click", ".deleteButton", (function () {
+            var nid = $(this).attr('id');
+            console.log("SE HER ID: " + nid);
+            $("#delete-customer-confirm").dialog(
+            {
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                closeOnEscape: false,
+                open: function (event, ui) {  // hides the close button in the top right corner
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                },
+                buttons:
+                {
+                    "Delete customer": function () {
+                        $.ajax(
+                        {
+                            url: "/Bank/AdminDeleteCustomer/" + nid,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (deleted)
+                            {
+                                if(deleted)
+                                {
+                                    
+                                    // funker
+                                }
+                                else
+                                {
+                                    // funker ikke
+                                }
+                            },
+                            error: function (x, y, z) {
+                                alert(x + '\n' + y + '\n' + z);
+                            }
+                        });
+                        $(this).dialog("close");
+                    },
+                    "Don't delete": function () {
+                        $(this).dialog("close");
+                    }
+                } // end of buttons
+            }); // end of dialog
+        })); // end of on click
+    })
+    
+</script>

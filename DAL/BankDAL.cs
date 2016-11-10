@@ -225,26 +225,44 @@ namespace DAL
                 {
                     nID = k.NID,
                     firstName = k.firstName,
-                    lastName = k.lastName,
-
+                    lastName = k.lastName
                 }).ToList();
-
                 return alleKunder;
             }
         }
 
         public bool deleteCustomer(string nID)
         {
+            System.Diagnostics.Debug.WriteLine("TEST" + nID);
             var db = new BankDBContext();
             try
             {
                 DbCustomer deleteCustomer = db.Customers.FirstOrDefault(pk => pk.NID.Equals(nID));
+                if (deleteCustomer == null)
+                {
+                    return false;
+                }
+                
+                foreach(DbAccount account in deleteCustomer.accounts)
+                {
+                    foreach(DbRegisteredPayment rp in account.registeredPayments)
+                    {
+                        db.RegisteredPayments.Remove(rp);
+                    }
+                    foreach (DbIssuedPayment ip in account.issuedPayments)
+                    {
+                        db.IssuedPayments.Remove(ip);
+                    }
+                    db.Accounts.Remove(account);
+                }
+
                 db.Customers.Remove(deleteCustomer);
                 db.SaveChanges();
                 return true;
             }
             catch (Exception feil)
             {
+                System.Diagnostics.Debug.WriteLine("DB FEIL: " + feil.ToString());
                 return false;
             }
         }
