@@ -300,6 +300,34 @@ namespace DAL
             }
         }
 
+        public List<Account> deleteAccount(string accountNumber)
+        {
+            var db = new BankDBContext();
+            
+            DbAccount account = db.Accounts.Find(accountNumber);
+
+            IEnumerable<DbRegisteredPayment> registeredPayments = db.RegisteredPayments.
+                Where(rp => rp.accountNumberFrom.Equals(account.accountNumber)).ToList();
+            foreach (DbRegisteredPayment rp in registeredPayments)
+            {
+                db.RegisteredPayments.Remove(rp);
+            }
+            IEnumerable<DbIssuedPayment> issuedPayments = db.IssuedPayments.
+                Where(ip => ip.accountNumberFrom.Equals(account.accountNumber)).ToList();
+            foreach (DbIssuedPayment ip in issuedPayments)
+            {
+                db.IssuedPayments.Remove(ip);
+            }
+            db.Accounts.Remove(account);
+            
+            return db.Accounts.Where(a => a.accountNumber.Equals(accountNumber)).Select(a => new Account()
+            {
+               accountNumber = a.accountNumber,
+               balance = a.balance
+            })
+            .ToList();
+        }
+
         public void populateDatabase()
         {
             var db = new BankDBContext();

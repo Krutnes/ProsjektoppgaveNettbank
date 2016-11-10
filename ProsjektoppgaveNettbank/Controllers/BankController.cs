@@ -215,5 +215,22 @@ namespace ProsjektoppgaveNettbank.Controllers
             var jsonSerializer = new JavaScriptSerializer();
             return jsonSerializer.Serialize(bankBLL.getAllCustomers());
         }
+
+        public ActionResult AdminCustomerDetails(string nid)
+        {
+            var bankBLL = new BankBLL();
+            Customer customer = bankBLL.findCustomer(nid);
+            List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
+
+
+            return View(customerAccounts);
+        }
+
+        public string AdminDeleteBankAccount(string accountNumber)
+        {
+            var bankBLL = new BankBLL();
+            var jsonSerializer = new JavaScriptSerializer();
+            return jsonSerializer.Serialize(bankBLL.adminDeleteAccount(accountNumber));
+        }
     }
 }

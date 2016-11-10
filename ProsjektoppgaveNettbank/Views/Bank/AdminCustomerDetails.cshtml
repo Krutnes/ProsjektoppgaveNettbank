@@ -1,0 +1,130 @@
+﻿@model IEnumerable<Models.Account>
+
+@{
+    ViewBag.Title = "AdminCustomerDetails";
+}
+
+<h2>AdminCustomerDetails</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table id="accounts_table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.accountNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.balance)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.accountNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.balance)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ })  |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            <button id="@item.accountNumber" class="btn btn-success deleteButton">Delete Account</button>
+        </td>
+    </tr>
+}
+
+</table>
+
+<div id="delete-account-confirm" title="Delete this account?" hidden>
+    <p>Are you sure?</p>
+</div>
+
+<script type="text/javascript">
+    $(function()
+    {
+        $("#accounts_table").on("click", ".deleteButton", (function ()
+        {
+            var accountNumber = $(this).attr('id');
+            $("#delete-account-confirm").dialog(
+            {
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                closeOnEscape: false,
+                open: function (event, ui) {  // hides the close button in the top right corner
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                },
+                buttons:
+                {
+                    "Delete bank account": function () {
+                        $.ajax(
+                        {
+                            url: "/Bank/AdminDeleteBankAccount/?accountNumber=" + accountNumber,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (accounts) {
+                                showAccounts(accounts);
+                            },
+                            error: function (x, y, z) {
+                                alert(x + '\n' + y + '\n' + z);
+                            }
+                        });
+                        $(this).dialog("close");
+                    },
+                    "Don't delete": function () {
+                        $(this).dialog("close");
+                    }
+                } // end of buttons
+            }); // end of dialog
+        })); // end of on click
+/*
+        $.ajax(
+        {
+            url: "/Bank/GetAllCustomers",
+            type: 'GET',
+            dataType: 'json',
+            success: function (customers) {
+                showCustomers(customers);
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+*/
+
+    }) // end of page load
+
+    function showAccounts(accountList) {
+        var out = "<table id='accounts_table'>" +
+            "<tr>" +
+                "<th>Account Number</th>" +
+                "<th>Balance</th>" +
+                "<th></th>" +
+                "<th></th>" +
+                "<th></th>" +
+            "</tr>";
+
+        for (var i in accountList) {
+            var accNumber = accountList[i].accountNumber;
+            var balance = accountList[i].balance;
+
+            out +=
+                "<tr>" +
+                    "<td>" + accNumber + "</td>" +
+                    "<td>" + balance + "</td>" +
+                    "<td><a href='/Bank/AdminEditAccount/" + accNumber + "' " +
+                        "class='btn btn-success'>Edit Account</a></td>" +
+                    "<td><a href='/Bank/AdminViewAccountDetails/" + accNumber + "' " +
+                        "class='btn btn-success'>Edit Account</a></td>" +
+                    "<td><button id='" + accNumber + "' class='btn btn-danger deleteButton'>" +
+                        "Delete Account</button></td>" +
+                "</tr>";
+        }
+        $("#accounts_table").html(out);
+    }
+
+</script>
