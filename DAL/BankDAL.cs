@@ -233,7 +233,7 @@ namespace DAL
 
         public bool deleteCustomer(string nID)
         {
-            System.Diagnostics.Debug.WriteLine("TEST" + nID);
+            //System.Diagnostics.Debug.WriteLine("DAL PARAMETER TEST: " + nID);
             var db = new BankDBContext();
             try
             {
@@ -242,14 +242,19 @@ namespace DAL
                 {
                     return false;
                 }
-                
-                foreach(DbAccount account in deleteCustomer.accounts)
+
+                IEnumerable<DbAccount> accounts = db.Accounts.Where(a => a.NID.Equals(nID)).ToList();
+                IEnumerable<DbRegisteredPayment> registeredPayments;
+                IEnumerable<DbIssuedPayment> issuedPayments;
+                foreach (DbAccount account in accounts)
                 {
-                    foreach(DbRegisteredPayment rp in account.registeredPayments)
+                    registeredPayments = db.RegisteredPayments.Where(rp => rp.accountNumberFrom.Equals(account.accountNumber)).ToList();
+                    issuedPayments = db.IssuedPayments.Where(ip => ip.accountNumberFrom.Equals(account.accountNumber)).ToList();
+                    foreach (DbRegisteredPayment rp in registeredPayments)
                     {
                         db.RegisteredPayments.Remove(rp);
                     }
-                    foreach (DbIssuedPayment ip in account.issuedPayments)
+                    foreach (DbIssuedPayment ip in issuedPayments)
                     {
                         db.IssuedPayments.Remove(ip);
                     }
