@@ -231,7 +231,7 @@ namespace DAL
             }
         }
 
-        public bool deleteCustomer(string nID)
+        public List<Customer> deleteCustomer(string nID)
         {
             //System.Diagnostics.Debug.WriteLine("DAL PARAMETER TEST: " + nID);
             var db = new BankDBContext();
@@ -240,7 +240,7 @@ namespace DAL
                 DbCustomer deleteCustomer = db.Customers.FirstOrDefault(pk => pk.NID.Equals(nID));
                 if (deleteCustomer == null)
                 {
-                    return false;
+                    return null;
                 }
 
                 IEnumerable<DbAccount> accounts = db.Accounts.Where(a => a.NID.Equals(nID)).ToList();
@@ -263,12 +263,18 @@ namespace DAL
 
                 db.Customers.Remove(deleteCustomer);
                 db.SaveChanges();
-                return true;
+                return db.Customers.Select(c => new Customer()
+                    {
+                        nID = c.NID,
+                        firstName = c.firstName,
+                        lastName = c.lastName
+                    })
+                .ToList();
             }
             catch (Exception feil)
             {
-                System.Diagnostics.Debug.WriteLine("DB FEIL: " + feil.ToString());
-                return false;
+                System.Diagnostics.Debug.WriteLine("DB ERROR: " + feil.ToString());
+                return null;
             }
         }
 

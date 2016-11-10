@@ -9,47 +9,9 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table id="customers_table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model[0].nID)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model[0].firstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model[0].lastName)
-        </th>
 
-        <th></th>
-    </tr>
+<div id="customers_table"></div>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.nID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.firstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.lastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.password)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "AdminEditCustomer", new { nid = item.nID }, new { @class = "btn btn-success" })
-                @Html.ActionLink("Customer accounts info", "AdminCustomerDetails", new { nid = item.nID }, new { @class = "btn btn-primary" })
-                <button id="@item.nID" class="btn btn-danger deleteButton">Delete Customer</button>
-      </td>
-
-  </tr>
-    }
-    
-
-</table>
 <div id="delete-customer-confirm" title="Delete registered payment?" hidden>
     <p>Are you sure?</p>
 </div>
@@ -57,7 +19,8 @@
 <script type="text/javascript">
     $(function()
     {
-        $("#customers_table").on("click", ".deleteButton", (function () {
+        $("#customers_table").on("click", ".deleteButton", (function ()
+        {
             var nid = $(this).attr('id');
             $("#delete-customer-confirm").dialog(
             {
@@ -77,10 +40,8 @@
                             url: "/Bank/AdminDeleteCustomer/" + nid,
                             type: 'GET',
                             dataType: 'json',
-                            success: function ()
-                            {
-                                console.log(" AJAX TEST RESULT FUNKER");
-                                
+                            success: function (customers) {
+                                showCustomers(customers);
                             },
                             error: function (x, y, z) {
                                 alert(x + '\n' + y + '\n' + z);
@@ -94,6 +55,50 @@
                 } // end of buttons
             }); // end of dialog
         })); // end of on click
-    })
-    
+
+        $.ajax(
+        {
+            url: "/Bank/GetAllCustomers",
+            type: 'GET',
+            dataType: 'json',
+            success: function (customers) {
+                showCustomers(customers);
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+
+        
+    }) // end of page load
+
+    function showCustomers(customerList) {
+        var out = "<table id='customers_table'>" +
+            "<tr>" +
+                "<th>National ID number</th>" +
+                "<th>Name</th>" +
+                "<th></th>" +
+                "<th></th>" +
+                "<th></th>" +
+            "</tr>";
+
+        for (var i in customerList) {
+            var nid = customerList[i].nID;
+            var name = customerList[i].firstName + " " + customerList[i].lastName;
+
+            out +=
+                "<tr>" +
+                    "<td>" + nid + "</td>" +
+                    "<td>" + name + "</td>" +
+                    "<td><a href='/Bank/AdminEditCustomer/" + nid + "' " +
+                        "class='btn btn-success'>Edit Customer</a></td>" +
+                    "<td><a href='/Bank/AdminCustomerDetails/" + nid + "' " +
+                        "class='btn btn-success'>Customer accounts info</a></td>" +
+                    "<td><button id='" + nid + "' class='btn btn-danger deleteButton'>" +
+                        "Delete Customer</button></td>" +
+                "</tr>";
+        }
+        $("#customers_table").html(out);
+    }
+
 </script>

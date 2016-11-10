@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace BLL
 {
@@ -94,10 +95,12 @@ namespace BLL
             return db.getAllCustomers();
         }
 
-        public bool deleteCustomer(string nID)
+        public List<Customer> adminDeleteCustomer(string nID)
         {
             BankDAL db = new BankDAL();
+
             return db.deleteCustomer(nID);
+            
         }
     }
 

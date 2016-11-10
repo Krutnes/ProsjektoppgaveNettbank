@@ -201,27 +201,19 @@ namespace ProsjektoppgaveNettbank.Controllers
         }
         
 
-        public void AdminDeleteCustomer(string id)
+        public string AdminDeleteCustomer(string id)
         {
             var bankBLL = new BankBLL();
-            Customer deleteCustomer = bankBLL.findCustomer(id);
-            bool deleteOK = bankBLL.deleteCustomer(id);
-            System.Diagnostics.Debug.WriteLine("CONTROLLER SLETTET TEST: " + deleteOK);
+            var jsonSerializer = new JavaScriptSerializer();
+            string json = jsonSerializer.Serialize(bankBLL.adminDeleteCustomer(id));
+            return json;
         }
 
-        [HttpPost]
-        public ActionResult AdminDeleteCustomer(Customer deleteCustomer)
+        public string GetAllCustomers()
         {
             var bankBLL = new BankBLL();
-            bool deleteOK = bankBLL.deleteCustomer(deleteCustomer.nID);
-            if (deleteOK)
-            {
-                return RedirectToAction("AdminOverview");
-            }
-            return View();
+            var jsonSerializer = new JavaScriptSerializer();
+            return jsonSerializer.Serialize(bankBLL.getAllCustomers());
         }
-
-        
-
     }
 }
