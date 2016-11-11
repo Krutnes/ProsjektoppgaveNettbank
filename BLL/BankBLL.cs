@@ -109,6 +109,18 @@ namespace BLL
 
             return db.deleteAccount(accountNumber);
         }
+
+        public bool AdminRegisterCustomer(Customer inCustomer)
+        {
+            BankDAL db = new BankDAL();
+            return db.adminRegisterCustomer(inCustomer);
+        }
+
+        public List<Account> newAccount(string nID)
+        {
+            BankDAL db = new BankDAL();
+            return db.newAccount(nID);
+        }
     }
 
 }

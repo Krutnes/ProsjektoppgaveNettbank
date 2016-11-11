@@ -6,7 +6,7 @@
 
 <h2>AdminCustomerDetails</h2>
 <p>
-    @Html.ActionLink("Create New", "Create")
+    <button id='@ViewBag.NID' class='btn btn-success createAccountButton'>Create new bank account</button>
 </p>
 <table id="accounts_table">
     <tr>
@@ -36,6 +36,10 @@
 }
 
 </table>
+
+<div id="register-account-confirm" title="Create new bank account?" hidden>
+    <p>Are you sure?</p>
+</div>
 
 <div id="delete-account-confirm" title="Delete this account?" hidden>
     <p>Are you sure?</p>
@@ -80,6 +84,43 @@
                 } // end of buttons
             }); // end of dialog
         })); // end of on click
+
+        $(".createAccountButton").click(function () {
+            var nid = $(this).attr('id');
+            console.log("SE HER ID: " + nid);
+            $("#register-account-confirm").dialog(
+            {
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                closeOnEscape: false,
+                open: function (event, ui) {  // hides the close button in the top right corner
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                },
+                buttons:
+                {
+                    "Create account": function () {
+                        $.ajax(
+                        {
+                            url: "/Bank/AdminCreateNewAccount/?nid=" + nid,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (accounts) {
+                                showAccounts(accounts);
+                            },
+                            error: function (x, y, z) {
+                                alert(x + '\n' + y + '\n' + z);
+                            }
+                        });
+                        $(this).dialog("close");
+                    },
+                    "Cancel": function () {
+                        $(this).dialog("close");
+                    }
+                } // end of buttons
+            }); // end of dialog
+        }); // end of on click
 
     }) // end of page load
 

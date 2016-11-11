@@ -155,6 +155,8 @@ namespace ProsjektoppgaveNettbank.Controllers
             return RedirectToAction("BankIndex", "Bank");
         }
 
+
+        // GJØR SESSION OG DELING AV ADMIN/KUNDE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         public ActionResult AdminLogin()
         {
             if (Session["AdminLoggedIn"] == null)
@@ -221,7 +223,7 @@ namespace ProsjektoppgaveNettbank.Controllers
             var bankBLL = new BankBLL();
             Customer customer = bankBLL.findCustomer(nid);
             List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
-
+            ViewBag.NID = (String) nid;
             return View(customerAccounts);
         }
 
@@ -239,6 +241,31 @@ namespace ProsjektoppgaveNettbank.Controllers
         public ActionResult AdminEditCustomer()
         {
             return View();
+        }
+
+        public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AdminRegisterCustomer(Customer inCustomer)
+        {
+
+            var db = new BankBLL();
+            string password = inCustomer.password;
+            bool OK = db.AdminRegisterCustomer(inCustomer);
+            return RedirectToAction("AdminOverview");
+        }
+
+        public string AdminCreateNewAccount(string nid)
+        {
+            BankBLL bankBLL = new BankBLL();
+            List<Account> customerAccounts = bankBLL.newAccount(nid);
+            var jsonSerializer = new JavaScriptSerializer();
+            return jsonSerializer.Serialize(customerAccounts);
+            
+
         }
     }
 }

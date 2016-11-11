@@ -22,7 +22,8 @@ namespace DAL
                         accounts.Add(new Account()
                         {
                             accountNumber = dba.accountNumber,
-                            balance = dba.balance
+                            balance = dba.balance,
+                            nID = dba.NID
                         });
                     }
                     return accounts;
@@ -361,6 +362,100 @@ namespace DAL
             .ToList();
             System.Diagnostics.Debug.WriteLine("DAL: SLETT ACCOUNT RESTERENDE KONTOER: " + remainingAccounts.Count());
             return remainingAccounts;
+        }
+
+        public bool adminRegisterCustomer(Customer inCustomer)
+        {
+            var newCustomer = new DbCustomer()
+            {
+
+                firstName = inCustomer.firstName,
+                lastName = inCustomer.lastName,
+                NID = inCustomer.nID
+
+            };
+
+            var db = new BankDBContext();
+            string salt = generateSalt();
+            string passwordAndSalt = inCustomer.password + salt;
+            byte[] hashedpassword = generateHash(passwordAndSalt);
+            newCustomer.password = hashedpassword;
+            newCustomer.salt = salt;
+            db.Customers.Add(newCustomer);
+            db.SaveChanges();
+            return true;
+        }
+
+        public List<Account> newAccount(string nID)  
+        {
+
+            string newAccountNumber = generateBankAccountNumber();
+            var db = new BankDBContext();
+
+            /*if (db.isAccountAlreadyPresent(newAccountNumber))
+            {
+
+            }
+            */
+            var accountNew = new DbAccount()
+            {
+                accountNumber = "0539" + newAccountNumber,
+                balance = 0,
+                NID = nID
+            };
+            try
+            {
+                db.Accounts.Add(accountNew);
+                db.SaveChanges();
+                return db.Accounts.
+                    Where(a => a.NID.Equals(nID)).Select(a => new Account()
+                    {
+                        accountNumber = a.accountNumber,
+                        balance = a.balance,
+                        nID = a.NID
+                    }).ToList();
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+
+        }
+
+        private string generateBankAccountNumber()
+        {
+            var chars = "0123456789";
+            var stringChars = new char[7];
+            var random = new Random();
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new String(stringChars);
+        }
+
+        // CHECK this LATER __________________________________________
+        public bool adminEditCustomer(Customer customer)
+        {
+            using (var db = new BankDBContext())
+            {
+                DbCustomer dbcustomer = db.Customers.FirstOrDefault(c => c.NID == customer.nID);
+                if (dbcustomer != null)
+                {
+                    dbcustomer.firstName = customer.firstName;
+                    dbcustomer.lastName = customer.lastName;
+                    string salt = generateSalt();
+                    string passwordAndSalt = customer.password + salt;
+                    byte[] hashedpassword = generateHash(passwordAndSalt);
+                    dbcustomer.password = hashedpassword;
+                    dbcustomer.salt = salt;
+                    db.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
         }
 
         public void populateDatabase()
