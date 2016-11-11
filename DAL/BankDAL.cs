@@ -304,10 +304,11 @@ namespace DAL
         {
             var db = new BankDBContext();
             
-            DbAccount account = db.Accounts.Find(accountNumber);
-
+            DbAccount account = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(accountNumber));
+            string nid = account.NID;
             IEnumerable<DbRegisteredPayment> registeredPayments = db.RegisteredPayments.
                 Where(rp => rp.accountNumberFrom.Equals(account.accountNumber)).ToList();
+            
             foreach (DbRegisteredPayment rp in registeredPayments)
             {
                 db.RegisteredPayments.Remove(rp);
@@ -319,13 +320,17 @@ namespace DAL
                 db.IssuedPayments.Remove(ip);
             }
             db.Accounts.Remove(account);
-            
-            return db.Accounts.Where(a => a.accountNumber.Equals(accountNumber)).Select(a => new Account()
+            db.SaveChanges();
+            //DbCustomer currentCustomer = db.Customers.FirstOrDefault(c => c.NID.Equals(nid));
+            System.Diagnostics.Debug.WriteLine("DAL: Kunde NID: " + nid);
+            List<Account> remainingAccounts = db.Accounts.Where(a => a.NID.Equals(nid)).Select(a => new Account()
             {
-               accountNumber = a.accountNumber,
-               balance = a.balance
+                accountNumber = a.accountNumber,
+                balance = a.balance
             })
             .ToList();
+            System.Diagnostics.Debug.WriteLine("DAL: SLETT ACCOUNT RESTERENDE KONTOER: " + remainingAccounts.Count());
+            return remainingAccounts;
         }
 
         public void populateDatabase()
@@ -460,7 +465,7 @@ namespace DAL
                 db.Customers.Add(dbCustomer1);
                 db.Customers.Add(dbCustomer2);
                 db.Customers.Add(dbCustomer3);
-                db.SaveChanges();
+                //db.SaveChanges();
 
                 db.Accounts.Add(account1_1);
                 db.Accounts.Add(account2_1);
@@ -472,7 +477,7 @@ namespace DAL
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("Feil i DB");
+                System.Diagnostics.Debug.WriteLine("Feil i DB: " + e.ToString());
             }
             populatePaymentTables();
         }

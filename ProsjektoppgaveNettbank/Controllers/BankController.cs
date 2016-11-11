@@ -222,15 +222,18 @@ namespace ProsjektoppgaveNettbank.Controllers
             Customer customer = bankBLL.findCustomer(nid);
             List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
 
-
             return View(customerAccounts);
         }
 
         public string AdminDeleteBankAccount(string accountNumber)
         {
             var bankBLL = new BankBLL();
+            List<Account> remainingAccounts = bankBLL.adminDeleteAccount(accountNumber);
+            System.Diagnostics.Debug.WriteLine("KOMMER HIT: " + remainingAccounts.Count);
+            foreach (Account i in remainingAccounts)
+                System.Diagnostics.Debug.WriteLine(i.accountNumber + "\n");
             var jsonSerializer = new JavaScriptSerializer();
-            return jsonSerializer.Serialize(bankBLL.adminDeleteAccount(accountNumber));
+            return jsonSerializer.Serialize(remainingAccounts);
         }
 
         public ActionResult AdminEditCustomer()
