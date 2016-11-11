@@ -148,6 +148,7 @@
     <Content Include="Views\Bank\AdminDeleteCustomer.cshtml" />
     <Content Include="Views\Bank\AdminCustomerDetails.cshtml" />
     <Content Include="Views\Bank\AdminEditCustomer.cshtml" />
+    <Content Include="Views\Bank\AdminPaymentOverview.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
