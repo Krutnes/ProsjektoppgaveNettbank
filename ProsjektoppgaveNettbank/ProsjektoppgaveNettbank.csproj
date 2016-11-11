@@ -97,6 +97,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\BankDatabase.mdf" />
+    <Content Include="App_Data\BankDatabase_log.ldf" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
@@ -146,6 +148,8 @@
     <Content Include="Views\Bank\AdminDeleteCustomer.cshtml" />
     <Content Include="Views\Bank\AdminCustomerDetails.cshtml" />
     <Content Include="Views\Bank\AdminEditCustomer.cshtml" />
+    <Content Include="Views\Bank\AdminPaymentOverview.cshtml" />
+    <Content Include="Views\Bank\AdminRegisterCustomer.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -153,9 +157,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
       <Project>{38bbbb1f-5359-4811-a212-43ef49455b69}</Project>

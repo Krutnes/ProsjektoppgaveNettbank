@@ -5,9 +5,8 @@
 }
 
 <h2>AdminCustomerDetails</h2>
-
 <p>
-    @Html.ActionLink("Create New", "Create")
+    <button id='@ViewBag.NID' class='btn btn-success createAccountButton'>Create new bank account</button>
 </p>
 <table id="accounts_table">
     <tr>
@@ -29,14 +28,18 @@
             @Html.DisplayFor(modelItem => item.balance)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ })  |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Edit Accountnumber", "Edit", new { tom = "" }, new { @class = "btn btn-success" })
+            @Html.ActionLink("View Transactions", "AdminViewAccountDetails", new { tom = "" }, new { @class = "btn btn-success" })
             <button id="@item.accountNumber" class="btn btn-success deleteButton">Delete Account</button>
         </td>
     </tr>
 }
 
 </table>
+
+<div id="register-account-confirm" title="Create new bank account?" hidden>
+    <p>Are you sure?</p>
+</div>
 
 <div id="delete-account-confirm" title="Delete this account?" hidden>
     <p>Are you sure?</p>
@@ -81,24 +84,48 @@
                 } // end of buttons
             }); // end of dialog
         })); // end of on click
-/*
-        $.ajax(
-        {
-            url: "/Bank/GetAllCustomers",
-            type: 'GET',
-            dataType: 'json',
-            success: function (customers) {
-                showCustomers(customers);
-            },
-            error: function (x, y, z) {
-                alert(x + '\n' + y + '\n' + z);
-            }
-        });
-*/
+
+        $(".createAccountButton").click(function () {
+            var nid = $(this).attr('id');
+            console.log("SE HER ID: " + nid);
+            $("#register-account-confirm").dialog(
+            {
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                closeOnEscape: false,
+                open: function (event, ui) {  // hides the close button in the top right corner
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                },
+                buttons:
+                {
+                    "Create account": function () {
+                        $.ajax(
+                        {
+                            url: "/Bank/AdminCreateNewAccount/?nid=" + nid,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (accounts) {
+                                showAccounts(accounts);
+                            },
+                            error: function (x, y, z) {
+                                alert(x + '\n' + y + '\n' + z);
+                            }
+                        });
+                        $(this).dialog("close");
+                    },
+                    "Cancel": function () {
+                        $(this).dialog("close");
+                    }
+                } // end of buttons
+            }); // end of dialog
+        }); // end of on click
 
     }) // end of page load
 
-    function showAccounts(accountList) {
+    function showAccounts(accountList)
+    {
         var out = "<table id='accounts_table'>" +
             "<tr>" +
                 "<th>Account Number</th>" +
@@ -111,16 +138,15 @@
         for (var i in accountList) {
             var accNumber = accountList[i].accountNumber;
             var balance = accountList[i].balance;
-
             out +=
                 "<tr>" +
                     "<td>" + accNumber + "</td>" +
                     "<td>" + balance + "</td>" +
                     "<td><a href='/Bank/AdminEditAccount/" + accNumber + "' " +
-                        "class='btn btn-success'>Edit Account</a></td>" +
+                        "class='btn btn-success'>Edit Accountnumber</a></td>" +
                     "<td><a href='/Bank/AdminViewAccountDetails/" + accNumber + "' " +
-                        "class='btn btn-success'>Edit Account</a></td>" +
-                    "<td><button id='" + accNumber + "' class='btn btn-danger deleteButton'>" +
+                        "class='btn btn-success'>View Transactions</a></td>" +
+                    "<td><button id='" + accNumber + "' class='btn btn-success deleteButton'>" +
                         "Delete Account</button></td>" +
                 "</tr>";
         }

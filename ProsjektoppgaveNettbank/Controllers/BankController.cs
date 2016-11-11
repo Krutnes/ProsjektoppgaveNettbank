@@ -156,6 +156,8 @@ namespace ProsjektoppgaveNettbank.Controllers
             return RedirectToAction("BankIndex", "Bank");
         }
 
+
+        // GJØR SESSION OG DELING AV ADMIN/KUNDE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         public ActionResult AdminLogin()
         {
             if (Session["AdminLoggedIn"] == null)
@@ -222,16 +224,19 @@ namespace ProsjektoppgaveNettbank.Controllers
             var bankBLL = new BankBLL();
             Customer customer = bankBLL.findCustomer(nid);
             List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
-
-
+            ViewBag.NID = (String) nid;
             return View(customerAccounts);
         }
 
         public string AdminDeleteBankAccount(string accountNumber)
         {
             var bankBLL = new BankBLL();
+            List<Account> remainingAccounts = bankBLL.adminDeleteAccount(accountNumber);
+            System.Diagnostics.Debug.WriteLine("KOMMER HIT: " + remainingAccounts.Count);
+            foreach (Account i in remainingAccounts)
+                System.Diagnostics.Debug.WriteLine(i.accountNumber + "\n");
             var jsonSerializer = new JavaScriptSerializer();
-            return jsonSerializer.Serialize(bankBLL.adminDeleteAccount(accountNumber));
+            return jsonSerializer.Serialize(remainingAccounts);
         }
         
         public ActionResult AdminEditCustomer(string nid)
@@ -252,5 +257,29 @@ namespace ProsjektoppgaveNettbank.Controllers
             return RedirectToAction("AdminOverview", "Bank");
         }
 
+        public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AdminRegisterCustomer(Customer inCustomer)
+        {
+
+            var db = new BankBLL();
+            string password = inCustomer.password;
+            bool OK = db.AdminRegisterCustomer(inCustomer);
+            return RedirectToAction("AdminOverview");
+        }
+
+        public string AdminCreateNewAccount(string nid)
+        {
+            BankBLL bankBLL = new BankBLL();
+            List<Account> customerAccounts = bankBLL.newAccount(nid);
+            var jsonSerializer = new JavaScriptSerializer();
+            return jsonSerializer.Serialize(customerAccounts);
+            
+
+        }
     }
 }
