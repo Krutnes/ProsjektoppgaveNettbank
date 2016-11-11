@@ -215,5 +215,10 @@ namespace ProsjektoppgaveNettbank.Controllers
             var jsonSerializer = new JavaScriptSerializer();
             return jsonSerializer.Serialize(bankBLL.getAllCustomers());
         }
+
+        public ActionResult AdminEditCustomer()
+        {
+            return View();
+        }
     }
 }
