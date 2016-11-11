@@ -25,10 +25,12 @@
                 </button>
                 <a class="navbar-brand"><img src="~/Content/images/logo.png" width="50" height="60"></a>
                 @Html.ActionLink("Hioa Holdings, HH™", "BankIndex", new { area = "" }, new { @class = "navbar-brand" })
+                @if ((bool)Session["LoggedIn"] != true) { 
                 @Html.ActionLink("Admin Login", "AdminLogin", new { area = "" }, new { @class = "navbar-brand" })
+                }
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right|
                     @if ((bool)Session["LoggedIn"])
                     {
                         <li>@Html.ActionLink("Account Overview", "AccountOverview", new { tom = "" }, new { @class = "navbar-brand" })</li>

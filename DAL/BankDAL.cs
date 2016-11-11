@@ -11,42 +11,57 @@ namespace DAL
     {
         public List<Account> getCustomerAccounts(string nid)
         {
-            using (var db = new BankDBContext())
+            try
             {
-                List<Account> accounts = new List<Account>();
-                List<DbAccount> dbAccounts = db.Accounts.Where(a => a.NID.Equals(nid)).ToList();
-                foreach(DbAccount dba in dbAccounts)
+                using (var db = new BankDBContext())
                 {
-                    accounts.Add(new Account()
+                    List<Account> accounts = new List<Account>();
+                    List<DbAccount> dbAccounts = db.Accounts.Where(a => a.NID.Equals(nid)).ToList();
+                    foreach (DbAccount dba in dbAccounts)
                     {
-                        accountNumber = dba.accountNumber,
-                        balance = dba.balance
-                    });
+                        accounts.Add(new Account()
+                        {
+                            accountNumber = dba.accountNumber,
+                            balance = dba.balance
+                        });
+                    }
+                    return accounts;
                 }
-                return accounts;
+            }
+            catch (Exception e)
+            {
+                ErrorReport(e.ToString());
+                return null;
             }
         }
-
         public List<RegisteredPayment> getRegisteredPayments(string accountNumber)
         {
             using (var db = new BankDBContext())
             {
-                List<RegisteredPayment> registeredPayments = new List<RegisteredPayment>();
-                IEnumerable<DbRegisteredPayment> dbRegisteredPayments = db.RegisteredPayments.
-                    Where(a => a.accountNumberFrom.Equals(accountNumber)).ToList();
-                foreach (DbRegisteredPayment regPayment in dbRegisteredPayments)
+                try
                 {
-                    registeredPayments.Add(new RegisteredPayment()
+                    List<RegisteredPayment> registeredPayments = new List<RegisteredPayment>();
+                    IEnumerable<DbRegisteredPayment> dbRegisteredPayments = db.RegisteredPayments.
+                        Where(a => a.accountNumberFrom.Equals(accountNumber)).ToList();
+                    foreach (DbRegisteredPayment regPayment in dbRegisteredPayments)
                     {
-                        id = regPayment.id,
-                        accountNumberFrom = regPayment.accountNumberFrom,
-                        accountNumberTo = regPayment.accountNumberTo,
-                        amount = regPayment.amount,
-                        paymentDate = regPayment.paymentDate,
-                        receiverName = regPayment.receiverName
-                    });
+                        registeredPayments.Add(new RegisteredPayment()
+                        {
+                            id = regPayment.id,
+                            accountNumberFrom = regPayment.accountNumberFrom,
+                            accountNumberTo = regPayment.accountNumberTo,
+                            amount = regPayment.amount,
+                            paymentDate = regPayment.paymentDate,
+                            receiverName = regPayment.receiverName
+                        });
+                    }
+                    return registeredPayments;
                 }
-                return registeredPayments;
+                catch (Exception e)
+                {
+                    ErrorReport(e.ToString());
+                    return null;
+                }
             }
         }
 
@@ -76,20 +91,28 @@ namespace DAL
         {
             using (var db = new BankDBContext())
             {
-                DbRegisteredPayment dbPayment = db.RegisteredPayments.FirstOrDefault(
-                    p => p.id == id);
-                if (dbPayment == null)
-                    return null;
-                RegisteredPayment rp = new RegisteredPayment()
+                try
                 {
-                    id = dbPayment.id,
-                    accountNumberFrom = dbPayment.accountNumberFrom,
-                    accountNumberTo = dbPayment.accountNumberTo,
-                    amount = dbPayment.amount,
-                    paymentDate = dbPayment.paymentDate,
-                    receiverName = dbPayment.receiverName
-                };
-                return rp;
+                    DbRegisteredPayment dbPayment = db.RegisteredPayments.FirstOrDefault(
+                        p => p.id == id);
+                    if (dbPayment == null)
+                        return null;
+                    RegisteredPayment rp = new RegisteredPayment()
+                    {
+                        id = dbPayment.id,
+                        accountNumberFrom = dbPayment.accountNumberFrom,
+                        accountNumberTo = dbPayment.accountNumberTo,
+                        amount = dbPayment.amount,
+                        paymentDate = dbPayment.paymentDate,
+                        receiverName = dbPayment.receiverName
+                    };
+                    return rp;
+                }
+                catch (Exception e)
+                {
+                    ErrorReport(e.ToString());
+                    return null;
+                }
             }
         }
 
@@ -124,12 +147,12 @@ namespace DAL
                     // ADD LOG ENTRY
                     return true;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    // LAGRE TIL FIL
+                    ErrorReport(e.ToString());
                     return false;
                 }
-                
+
             }
         }
 
@@ -171,12 +194,19 @@ namespace DAL
         {
             using (var db = new BankDBContext())
             {
-                DbCustomer customerFound = db.Customers.FirstOrDefault(c => c.NID.Equals(customer.nID));
-                if (customerFound != null)
+                try
                 {
-                    byte[] checkPassword = generateHash(customer.password + customerFound.salt);
-                    bool validCustomer = customerFound.password.SequenceEqual(checkPassword);
-                    return validCustomer;
+                    DbCustomer customerFound = db.Customers.FirstOrDefault(c => c.NID.Equals(customer.nID));
+                    if (customerFound != null)
+                    {
+                        byte[] checkPassword = generateHash(customer.password + customerFound.salt);
+                        bool validCustomer = customerFound.password.SequenceEqual(checkPassword);
+                        return validCustomer;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ErrorReport(e.ToString());
                 }
                 return false;
             }
@@ -527,7 +557,14 @@ namespace DAL
             {
                 System.Diagnostics.Debug.WriteLine("Feil i DB" + e.ToString());
             }
-
         }
+        public void ErrorReport(string error)
+        {
+            string path = Environment.CurrentDirectory + @"\ErrorLog";
+            DateTime CurrentTime = DateTime.Now;
+            string[] lines = { CurrentTime + "  " + error };
+            System.IO.File.AppendAllLines( path + DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".txt", lines);
+        }
+
     }
 }
