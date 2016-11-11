@@ -88,6 +88,7 @@ namespace ProsjektoppgaveNettbank.Controllers
 
             return RedirectToAction("AccountOverview", "Bank");
         }
+        
 
         public ActionResult RegisterSinglePayment(string id)
         {
@@ -232,10 +233,24 @@ namespace ProsjektoppgaveNettbank.Controllers
             var jsonSerializer = new JavaScriptSerializer();
             return jsonSerializer.Serialize(bankBLL.adminDeleteAccount(accountNumber));
         }
-
-        public ActionResult AdminEditCustomer()
+        
+        public ActionResult AdminEditCustomer(string nid)
         {
-            return View();
+            System.Diagnostics.Debug.WriteLine("Test nid: " + nid);
+            var bankBLL = new BankBLL();
+            Customer customer = bankBLL.findCustomer(nid);
+            return View(customer);
         }
+        
+        [HttpPost]
+        public ActionResult AdminEditCustomer(Customer customer)
+        {
+            var bankBLL = new BankBLL(); ;
+            if (!bankBLL.adminEditCustomer(customer))
+                return View(customer);
+            
+            return RedirectToAction("AdminOverview", "Bank");
+        }
+
     }
 }
