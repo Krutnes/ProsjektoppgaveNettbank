@@ -9,91 +9,74 @@ using System.Web.Script.Serialization;
 
 namespace BLL
 {
-    public class BankBLL
+    public class BankCustomerBLL
     {
+        public bool deletePayment(int id)
+        {
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.deletePayment(id);
+        }
+
+        public bool editPayment(RegisteredPayment payment)
+        {
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.editPayment(payment);
+        }
+
+        public RegisteredPayment findRegisteredPayment(int id)
+        {
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.findRegisteredPayment(id);
+        }
+
         public List<Account> getCustomerAccounts(string nid)
         {
-            BankDAL db = new BankDAL();
+            BankCustomerDAL db = new BankCustomerDAL();
             return db.getCustomerAccounts(nid);
         }
 
         public List<RegisteredPayment> getRegisteredPayments(string accountNumber)
         {
-            BankDAL db = new BankDAL();
+            BankCustomerDAL db = new BankCustomerDAL();
             return db.getRegisteredPayments(accountNumber);
-        }
-
-        public List<IssuedPayment> getIssuedPayments(string accountNumber)
-        {
-            BankDAL db = new BankDAL();
-            return db.getIssuedPayments(accountNumber);
-        }
-
-        public RegisteredPayment findRegisteredPayment(int id)
-        {
-            BankDAL db = new BankDAL();
-            return db.findRegisteredPayment(id);
-        }
-
-        public bool editPayment(RegisteredPayment payment)
-        {
-            BankDAL db = new BankDAL();
-            return db.editPayment(payment);
-        }
-
-        public bool adminEditCustomer(Customer customer)
-        {
-            BankDAL db = new BankDAL();
-            return db.adminEditCustomer(customer);
-        }
-
-        public bool adminEditAccount(Account account, string oldAccountNumber)
-        {
-            BankDAL db = new BankDAL();
-            return db.adminEditAccount(account, oldAccountNumber);
         }
 
         public bool deletePayment(int id)
         {
-            BankDAL db = new BankDAL();
-            return db.deletePayment(id);
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.getIssuedPayments(accountNumber);
         }
-
+                                             
         public string getRegisteredPaymentAccount(int id)
         {
-            BankDAL db = new BankDAL();
+            BankCustomerDAL db = new BankCustomerDAL();
             return db.getRegisteredPaymentAccount(id);
-        }
-
-        public bool registerPayment(RegisteredPayment payment)
-        {
-            BankDAL db = new BankDAL();
-            return db.registerPayment(payment);
         }
 
         public bool isLoginCorrect(Customer customer)
         {
-            BankDAL db = new BankDAL();
+            BankCustomerDAL db = new BankCustomerDAL();
             return db.isLoginCorrect(customer);
-        }     
+        }
 
         public void populateDatabase()
         {
-            BankDAL db = new BankDAL();
+            BankCustomerDAL db = new BankCustomerDAL();
             db.populateDatabase();
         }
 
         public void populatePaymentTables()
         {
-            BankDAL db = new BankDAL();
+            BankCustomerDAL db = new BankCustomerDAL();
             db.populatePaymentTables();
         }
 
-        public Customer findCustomer(string nID)
+        public bool registerPayment(RegisteredPayment payment)
         {
-            BankDAL db = new BankDAL();
-            return db.findCustomer(nID);
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.registerPayment(payment);
         }
+    }
 
         public Account findAccount(string accNumber)
         {
@@ -102,41 +85,53 @@ namespace BLL
         }
 
         public bool isAdminLoginCorrect(Admin admin)
-        {
-            BankDAL db = new BankDAL();
-            return db.isAdminLoginCorrect(admin);
-        }
-
-        public List<Customer> getAllCustomers()
-        {
-            BankDAL db = new BankDAL();
-            return db.getAllCustomers();
-        }
-
+    public class BankAdminBLL
+    {
         public List<Customer> adminDeleteCustomer(string nID)
         {
-            BankDAL db = new BankDAL();
-
+            BankAdminDAL db = new BankAdminDAL();
             return db.deleteCustomer(nID);
-            
         }
 
         public List<Account> adminDeleteAccount(string accountNumber)
         {
-            BankDAL db = new BankDAL();
-
+            BankAdminDAL db = new BankAdminDAL();
             return db.deleteAccount(accountNumber);
         }
 
-        public bool AdminRegisterCustomer(Customer inCustomer)
+        public bool adminEditCustomer(Customer customer)
         {
-            BankDAL db = new BankDAL();
+            BankAdminDAL db = new BankAdminDAL();
+            return db.adminEditCustomer(customer);
+        }
+
+        public bool adminRegisterCustomer(Customer inCustomer)
+        {
+            BankAdminDAL db = new BankAdminDAL();
             return db.adminRegisterCustomer(inCustomer);
+        }
+
+        public Customer findCustomer(string nID)
+        {
+            BankAdminDAL db = new BankAdminDAL();
+            return db.findCustomer(nID);
+        }
+
+        public List<Customer> getAllCustomers()
+        {
+            BankAdminDAL db = new BankAdminDAL();
+            return db.getAllCustomers();
+        }
+
+        public bool isAdminLoginCorrect(Admin admin)
+        {
+            BankAdminDAL db = new BankAdminDAL();
+            return db.isAdminLoginCorrect(admin);
         }
 
         public List<Account> newAccount(string nID)
         {
-            BankDAL db = new BankDAL();
+            BankAdminDAL db = new BankAdminDAL();
             return db.newAccount(nID);
         }
     }
