@@ -13,6 +13,19 @@ namespace ProsjektoppgaveNettbank.Controllers
 {
     public class BankController : Controller
     {
+        public ActionResult AccountOverview()
+        {
+            if (Session["LoggedIn"] != null)
+            {
+                bool loggedIn = (bool)Session["LoggedIn"];
+                if (loggedIn)
+                {
+                    return View();
+                }
+            }
+            return RedirectToAction("BankIndex", "Bank");
+        }
+
         public ActionResult BankIndex()
         {
             if (Session["LoggedIn"] == null)
@@ -30,7 +43,7 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult BankIndex(Customer customer)
         {
-            var bankBLL = new BankBLL();
+            var bankBLL = new BankCustomerBLL();
             if (bankBLL.isLoginCorrect(customer))
             {
                 Session["LoggedIn"] = true;
@@ -42,26 +55,16 @@ namespace ProsjektoppgaveNettbank.Controllers
             return View();
         }
 
-        public ActionResult RegisterCustomer()
+        public string DeletePayment(string id)
         {
-            var bankBLL = new BankBLL();
-            bankBLL.populateDatabase();
-            return View();
-        }
+            var bankBLL = new BankCustomerBLL();
+            string currentAccount = bankBLL.getRegisteredPaymentAccount(Convert.ToInt32(id));
 
-        public ActionResult AccountOverview()
-        {
-            if (Session["LoggedIn"] != null)
-            {
-                bool loggedIn = (bool)Session["LoggedIn"];
-                if (loggedIn)
-                {
-                    return View();
-                }
-            }
-            return RedirectToAction("BankIndex", "Bank");
-        }
+            bankBLL.deletePayment(Convert.ToInt32(id));
+            string allRegisteredPaymentsJSON = getRegisteredPayments(currentAccount);
 
+            return allRegisteredPaymentsJSON;
+        }
 
         public ActionResult EditPayment(string id)
         {
@@ -70,7 +73,7 @@ namespace ProsjektoppgaveNettbank.Controllers
                 bool loggedIn = (bool)Session["LoggedIn"];
                 if (loggedIn)
                 {
-                    var bankBLL = new BankBLL();
+                    var bankBLL = new BankCustomerBLL();
                     RegisteredPayment payment = bankBLL.findRegisteredPayment(Convert.ToInt32(id));
                     return View(payment);
                 }
@@ -82,13 +85,45 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult EditPayment(RegisteredPayment registeredPayment)
         {
-            var bankBLL = new BankBLL();
-            if(!bankBLL.editPayment(registeredPayment))
+            var bankBLL = new BankCustomerBLL();
+            if (!bankBLL.editPayment(registeredPayment))
                 return View(registeredPayment);
 
             return RedirectToAction("AccountOverview", "Bank");
         }
-        
+
+        public string getCustomerAccounts()
+        {
+            var bankBLL = new BankCustomerBLL();
+            List<Account> allCustomerAccounts = bankBLL.getCustomerAccounts((String)Session["NID"]);
+            var jsonSerializer = new JavaScriptSerializer();
+            string json = jsonSerializer.Serialize(allCustomerAccounts);
+            return json;
+        }
+
+        public string getRegisteredPayments(string id)
+        {
+            var bankBLL = new BankCustomerBLL();
+            List<RegisteredPayment> allRegisteredPayments = bankBLL.getRegisteredPayments(id);
+            var jsonSerializer = new JavaScriptSerializer();
+            string json = jsonSerializer.Serialize(allRegisteredPayments);
+            return json;
+        }
+
+        public ActionResult LogOut()
+        {
+            Session["LoggedIn"] = null;
+            Session["NID"] = null;
+            return RedirectToAction("BankIndex", "Bank");
+        }
+
+
+        public ActionResult RegisterCustomer()
+        {
+            var bankBLL = new BankCustomerBLL();
+            bankBLL.populateDatabase();
+            return View();
+        }
 
         public ActionResult RegisterSinglePayment(string id)
         {
@@ -115,64 +150,96 @@ namespace ProsjektoppgaveNettbank.Controllers
                 Session["accountNumber"] = null;
                 return RedirectToAction("BankIndex", "Bank");
             }
-            registeredPayment.accountNumberFrom = (string) Session["accountNumber"];
-            var bankBLL = new BankBLL();
+            registeredPayment.accountNumberFrom = (string)Session["accountNumber"];
+            var bankBLL = new BankCustomerBLL();
             if (!bankBLL.registerPayment(registeredPayment))
                 return RedirectToAction("RegisterSinglePayment", "Bank");
             Session["accountNumber"] = null;
             return RedirectToAction("AccountOverview", "Bank");
         }
 
-        public string DeletePayment(string id)
-        {
-            var bankBLL = new BankBLL();
-            string currentAccount = bankBLL.getRegisteredPaymentAccount(Convert.ToInt32(id));
-
-            bankBLL.deletePayment(Convert.ToInt32(id));
-            string allRegisteredPaymentsJSON = getRegisteredPayments(currentAccount);
-
-            return allRegisteredPaymentsJSON;
-        }
-
-        public string getCustomerAccounts()
-        {
-            var bankBLL = new BankBLL();
-            List<Account> allCustomerAccounts = bankBLL.getCustomerAccounts((String)Session["NID"]);
-            var jsonSerializer = new JavaScriptSerializer();
-            string json = jsonSerializer.Serialize(allCustomerAccounts);
-            return json;
-        }
-
-        public string getRegisteredPayments(string id)
-        {
-            var bankBLL = new BankBLL();
-            List<RegisteredPayment> allRegisteredPayments = bankBLL.getRegisteredPayments(id);
-            var jsonSerializer = new JavaScriptSerializer();
-            string json = jsonSerializer.Serialize(allRegisteredPayments);
-            return json;
-        }
-
-        public ActionResult LogOut()
-        {
-            Session["LoggedIn"] = null;
-            Session["NID"] = null;
-            return RedirectToAction("BankIndex", "Bank");
-        }
-
-
         // GJØR SESSION OG DELING AV ADMIN/KUNDE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+        public string AdminCreateNewAccount(string nid)
+        {
+            BankAdminBLL BankAdminBLL = new BankAdminBLL();
+            List<Account> customerAccounts = BankAdminBLL.newAccount(nid);
+            var jsonSerializer = new JavaScriptSerializer();
+            return jsonSerializer.Serialize(customerAccounts);
+        }
+
+        public ActionResult AdminCustomerDetails(string nid)
+        {
+            if (Session["AdminLoggedIn"] != null)
+            {
+                if ((bool)Session["AdminLoggedIn"])
+                {
+                    var bankBLL = new BankCustomerBLL();
+                    List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
+                    ViewBag.NID = (String)nid;
+                    return View(customerAccounts);
+                }
+            }
+            Session["AdminLoggedIn"] = null;
+            return RedirectToAction("AdminLogin", "Bank");
+        }
+
+        public string AdminDeleteBankAccount(string accountNumber)
+        {
+            var BankAdminBLL = new BankAdminBLL();
+            List<Account> remainingAccounts = BankAdminBLL.adminDeleteAccount(accountNumber);
+            System.Diagnostics.Debug.WriteLine("KOMMER HIT: " + remainingAccounts.Count);
+            foreach (Account i in remainingAccounts)
+                System.Diagnostics.Debug.WriteLine(i.accountNumber + "\n");
+            var jsonSerializer = new JavaScriptSerializer();
+            return jsonSerializer.Serialize(remainingAccounts);
+        }
+
+        public string AdminDeleteCustomer(string id)
+        {
+            var BankAdminBLL = new BankAdminBLL();
+            var jsonSerializer = new JavaScriptSerializer();
+            string json = jsonSerializer.Serialize(BankAdminBLL.adminDeleteCustomer(id));
+            return json;
+        }
+
+        public ActionResult AdminEditCustomer(string nid)
+        {
+            if (Session["AdminLoggedIn"] != null)
+            {
+                if ((bool)Session["AdminLoggedIn"])
+                {
+                    var BankAdminBLL = new BankAdminBLL();
+                    Customer customer = BankAdminBLL.findCustomer(nid);
+                    return View(customer);
+                }
+            }
+            Session["AdminLoggedIn"] = null;
+            return RedirectToAction("AdminLogin", "Bank");
+        }
+
+        [HttpPost]
+        public ActionResult AdminEditCustomer(Customer customer)
+        {
+            var BankAdminBLL = new BankAdminBLL(); ;
+            if (!BankAdminBLL.adminEditCustomer(customer))
+                return View(customer);
+
+            return RedirectToAction("AdminOverview", "Bank");
+        }
+
         public ActionResult AdminLogin()
         {
             if (Session["AdminLoggedIn"] != null && (bool)Session["AdminLoggedIn"])
-                    return RedirectToAction("AdminOverview", "Bank");
+                return RedirectToAction("AdminOverview", "Bank");
             return View();
         }
 
         [HttpPost]
         public ActionResult AdminLogin(Admin admin)
         {
-            var bankBLL = new BankBLL();
-            if (bankBLL.isAdminLoginCorrect(admin))
+            var bankAdminBLL = new BankAdminBLL();
+            if (bankAdminBLL.isAdminLoginCorrect(admin))
             {
                 Session["AdminLoggedIn"] = true;
                 return RedirectToAction("AdminOverview", "Bank");
@@ -188,88 +255,20 @@ namespace ProsjektoppgaveNettbank.Controllers
                 bool AdminLoggedIn = (bool)Session["AdminLoggedIn"];
                 if (AdminLoggedIn)
                 {
-                    var bankBLL = new BankBLL();
-                    List<Customer> allCustomers = bankBLL.getAllCustomers();
+                    var BankAdminBLL = new BankAdminBLL();
+                    List<Customer> allCustomers = BankAdminBLL.getAllCustomers();
                     return View(allCustomers);
                 }
             }
             Session["AdminLoggedIn"] = null;
             return RedirectToAction("AdminLogin", "Bank");
         }
-        
-
-        public string AdminDeleteCustomer(string id)
-        {
-            var bankBLL = new BankBLL();
-            var jsonSerializer = new JavaScriptSerializer();
-            string json = jsonSerializer.Serialize(bankBLL.adminDeleteCustomer(id));
-            return json;
-        }
-
-        public string GetAllCustomers()
-        {
-            var bankBLL = new BankBLL();
-            var jsonSerializer = new JavaScriptSerializer();
-            return jsonSerializer.Serialize(bankBLL.getAllCustomers());
-        }
-
-        public ActionResult AdminCustomerDetails(string nid)
-        {
-            if (Session["AdminLoggedIn"] != null)
-            {
-                if ((bool)Session["AdminLoggedIn"])
-                {
-                    var bankBLL = new BankBLL();
-                    List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
-                    ViewBag.NID = (String)nid;
-                    return View(customerAccounts);
-                }
-            }
-            Session["AdminLoggedIn"] = null;
-            return RedirectToAction("AdminLogin", "Bank");
-        }
-
-        public string AdminDeleteBankAccount(string accountNumber)
-        {
-            var bankBLL = new BankBLL();
-            List<Account> remainingAccounts = bankBLL.adminDeleteAccount(accountNumber);
-            System.Diagnostics.Debug.WriteLine("KOMMER HIT: " + remainingAccounts.Count);
-            foreach (Account i in remainingAccounts)
-                System.Diagnostics.Debug.WriteLine(i.accountNumber + "\n");
-            var jsonSerializer = new JavaScriptSerializer();
-            return jsonSerializer.Serialize(remainingAccounts);
-        }
-        
-        public ActionResult AdminEditCustomer(string nid)
-        {
-            if (Session["AdminLoggedIn"] != null)
-            {
-                if ((bool)Session["AdminLoggedIn"])
-                {
-                    var bankBLL = new BankBLL();
-                    Customer customer = bankBLL.findCustomer(nid);
-                    return View(customer);
-                }
-            }
-            Session["AdminLoggedIn"] = null;
-            return RedirectToAction("AdminLogin", "Bank");
-        }
-        
-        [HttpPost]
-        public ActionResult AdminEditCustomer(Customer customer)
-        {
-            var bankBLL = new BankBLL(); ;
-            if (!bankBLL.adminEditCustomer(customer))
-                return View(customer);
-            
-            return RedirectToAction("AdminOverview", "Bank");
-        }
 
         public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
         {
             if (Session["AdminLoggedIn"] != null && (bool)Session["AdminLoggedIn"])
                 return View();
-            
+
             Session["AdminLoggedIn"] = null;
             return RedirectToAction("AdminLogin", "Bank");
         }
@@ -277,21 +276,18 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult AdminRegisterCustomer(Customer inCustomer)
         {
-            var db = new BankBLL();
+            var db = new BankAdminBLL();
             string password = inCustomer.password;
-            if (!db.AdminRegisterCustomer(inCustomer))
+            if (!db.adminRegisterCustomer(inCustomer))
                 return View(inCustomer);
             return RedirectToAction("AdminOverview");
         }
 
-        public string AdminCreateNewAccount(string nid)
+        public string GetAllCustomers()
         {
-            BankBLL bankBLL = new BankBLL();
-            List<Account> customerAccounts = bankBLL.newAccount(nid);
+            var BankAdminBLL = new BankAdminBLL();
             var jsonSerializer = new JavaScriptSerializer();
-            return jsonSerializer.Serialize(customerAccounts);
-            
-
+            return jsonSerializer.Serialize(BankAdminBLL.getAllCustomers());
         }
     }
 }
