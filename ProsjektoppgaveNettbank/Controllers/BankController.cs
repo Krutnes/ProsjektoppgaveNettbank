@@ -195,31 +195,6 @@ namespace ProsjektoppgaveNettbank.Controllers
             return jsonSerializer.Serialize(remainingAccounts);
         }
 
-        public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult AdminRegisterCustomer(Customer inCustomer)
-        {
-
-            var db = new BankBLL();
-            string password = inCustomer.password;
-            bool OK = db.AdminRegisterCustomer(inCustomer);
-            return RedirectToAction("AdminOverview");
-        }
-
-        public string AdminCreateNewAccount(string nid)
-        {
-            BankBLL bankBLL = new BankBLL();
-            List<Account> customerAccounts = bankBLL.newAccount(nid);
-            var jsonSerializer = new JavaScriptSerializer();
-            return jsonSerializer.Serialize(customerAccounts);
-            
-        }
-
-
         public string AdminDeleteCustomer(string id)
         {
             var BankAdminBLL = new BankAdminBLL();
@@ -230,11 +205,6 @@ namespace ProsjektoppgaveNettbank.Controllers
 
         public ActionResult AdminEditCustomer(string nid)
         {
-            var bankBLL = new BankBLL();
-            Customer customer = bankBLL.findCustomer(nid);
-            return View(customer);
-        }
-
             if (Session["AdminLoggedIn"] != null)
             {
                 if ((bool)Session["AdminLoggedIn"])
@@ -258,8 +228,7 @@ namespace ProsjektoppgaveNettbank.Controllers
             return RedirectToAction("AdminOverview", "Bank");
         }
 
-            return RedirectToAction("AdminOverview", "Bank");
-        }
+
 
         public ActionResult AdminLogin()
         {
@@ -299,10 +268,28 @@ namespace ProsjektoppgaveNettbank.Controllers
 
         public ActionResult AdminEditAccount(string accNumber)
         {
-            var bankBLL = new BankBLL();
+            var bankBLL = new BankAdminBLL();
             Account account = bankBLL.findAccount(accNumber);
-            Session["AccountNumber"] = (string) accNumber;
+            Session["AccountNumber"] = (string)accNumber;
             return View(account);
+        }
+
+        [HttpPost]
+        public ActionResult AdminEditAccount(Account account)
+        {
+
+            var bankBLL = new BankAdminBLL();
+            if (!bankBLL.adminEditAccount(account, (string)Session["AccountNumber"]))
+            {
+                return View(account);
+            }
+            string nid = bankBLL.findAccount(account.accountNumber).nID;
+            System.Diagnostics.Debug.Write("TEST nid" + nid);
+            return Redirect("/Bank/AdminCustomerDetails/?nid=" + nid);
+        }
+
+        public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
+        {
             if (Session["AdminLoggedIn"] != null && (bool)Session["AdminLoggedIn"])
                 return View();
 
@@ -311,21 +298,8 @@ namespace ProsjektoppgaveNettbank.Controllers
         }
 
         [HttpPost]
-        public ActionResult AdminEditAccount(Account account)
+        public ActionResult AdminRegisterCustomer(Customer inCustomer)
         {
-            
-            var bankBLL = new BankBLL();
-            if (!bankBLL.adminEditAccount(account, (string) Session["AccountNumber"]))
-            {
-                return View(account);
-            }
-            string nid = bankBLL.findAccount(account.accountNumber).nID;
-            System.Diagnostics.Debug.Write("TEST nid"+ nid);
-            return Redirect("/Bank/AdminCustomerDetails/?nid=" + nid);
-        }
-
-    }
-}
             var db = new BankAdminBLL();
             string password = inCustomer.password;
             if (!db.adminRegisterCustomer(inCustomer))
