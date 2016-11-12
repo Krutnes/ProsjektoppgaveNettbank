@@ -18,13 +18,12 @@
         <div class="form-group">
             @Html.LabelFor(model => model.password, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.PasswordFor(model => model.password, new { htmlAttributes = new { @class = "form-control"} })
+                @Html.PasswordFor(model => model.password, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <a href="/Bank/RegisterCustomer">Fyll inn database</a>
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Logg inn" class="btn btn-success" />
@@ -32,3 +31,52 @@
         </div>
     </div>
 }
+
+<div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+        Dropdown Example
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a href="#">HTML</a></li>
+        <li><a href="#">CSS</a></li>
+        <li><a href="#">JavaScript</a></li>
+    </ul>
+</div>
+
+<div name ="slideshowmethod">
+    <script type="text/javascript">
+        $(function () {
+            var currentPosition = 0;
+            var slideWidth = 500;
+            var slides = $('.slide');
+            var numberOfSlides = slides.length;
+            setInterval(changePosition, 3000);
+            slides.wrapAll('<div id="slidesHolder"></div>');
+            slides.css({ 'float': 'left' });
+            $('#slidesHolder').css('width', slideWidth * numberOfSlides);
+            function changePosition() {
+                if (currentPosition == numberOfSlides - 1) {
+                    currentPosition = 0;
+                }
+                else {
+                    currentPosition++;
+                }
+                moveSlide();
+            }
+            function moveSlide() {
+                $('#slidesHolder').animate({ 'marginLeft': slideWidth * (-currentPosition) });
+            }
+        });
+    </script>
+    <h1>“We're a bank that cares”</h1>
+    <div id="slideshow">
+        <div id="slideshowWindow">
+            <div class="slide"><b>SlideShow Image1</b> <img src="~/Content/slideshow/1.jpg" style="border: none; width: 100%;" /> </div>
+            <div class="slide"><b>SlideShow Image2</b><img src="~/Content/slideshow/2.jpg" style="border: none; width: 100%;"/> </div>
+            <div class="slide"><b>SlideShow Image3</b><img src="~/Content/slideshow/3.jpg" style="border: none; width: 100%;"/> </div>
+            <div class="slide"><b>SlideShow Image4</b><img src="~/Content/slideshow/4.jpeg" style="border: none; width: 100%;"/> </div>
+         </div>
+    </div>
+</div>
+<br />

@@ -8,10 +8,11 @@
     <script src="~/Scripts/jquery-ui.js"></script>
     <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/custom.js"></script>
     <link href="~/Content/jquery-ui.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    
 </head>
 <body>
     <div class="navbar navbar-default navbar-fixed-top">
@@ -27,7 +28,7 @@
                 @Html.ActionLink("Hioa Holdings, HH™", "BankIndex", new { area = "" }, new { @class = "navbar-brand" })
                 @if ((bool)Session["LoggedIn"] != true)
                 {
-                @Html.ActionLink("Admin Login", "AdminLogin", new { area = "" }, new { @class = "navbar-brand" })
+                    @Html.ActionLink("Admin Login", "AdminLogin", new { area = "" }, new { @class = "navbar-brand" })
                 }
             </div>
             <div class="navbar-collapse collapse">
@@ -37,10 +38,16 @@
                         <li>@Html.ActionLink("Account Overview", "AccountOverview", new { tom = "" }, new { @class = "navbar-brand" })</li>
                         <li>@Html.ActionLink("Log Out", "LogOut", new { tom = "" }, new { @class = "navbar-brand" })</li>
                     }
+                    else
+                    {
+                        
+                    }
+
                 </ul>
             </div>
         </div>
     </div>
+
 
 
     <div class="container body-content">
