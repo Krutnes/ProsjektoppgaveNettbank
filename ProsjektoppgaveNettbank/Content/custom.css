@@ -1,17 +1,19 @@
-﻿        #slideshow #slideshowWindow {
-            width: 500px;
-            height: 257px;
-            margin: 0;
-            padding: 0;
-            position: relative;
-            overflow: hidden;
-        }
+﻿#slideshow #slideshowWindow 
+{
+    width: 500px;
+    height: 257px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
 
-            #slideshow #slideshowWindow .slide {
-                margin: 0;
-                padding: 0;
-                width: 500px;
-                height: 257px;
-                float: left;
-                position: relative;
-            }
+#slideshow #slideshowWindow .slide 
+{
+    margin: 0;
+    padding: 0;
+    width: 500px;
+    height: 257px;
+    float: left;
+    position: relative;
+}
