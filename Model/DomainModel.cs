@@ -35,6 +35,7 @@ namespace Models
 
     public class Account
     {
+        public int id { get; set; }
         [RegularExpression("[\\d]{11}")]
         [Required(ErrorMessage = "Account number must be 11 digits")]
         public string accountNumber { get; set; }

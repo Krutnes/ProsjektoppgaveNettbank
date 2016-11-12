@@ -26,7 +26,6 @@ namespace DAL
                     errorReport(e.ToString());
                     return false;
                 }
-
             }
         }
 
@@ -186,7 +185,7 @@ namespace DAL
                 }
             }
         }
-                                              
+
         public string getRegisteredPaymentAccount(int id)
         {
             using (var db = new BankDBContext())
@@ -496,7 +495,36 @@ namespace DAL
 
     public class BankAdminDAL
     {
-        // CHECK this LATER __________________________________________
+        public bool adminEditAccount(Account account, string oldAccountNumber) // LOG PLEASE
+        {
+            using (var db = new BankDBContext())
+            {
+                DbAccount dbaccount = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(oldAccountNumber));
+                System.Diagnostics.Debug.WriteLine("TEST DAL ACCOUNT: " + dbaccount.accountNumber);
+
+                IEnumerable<DbRegisteredPayment> registeredAccounts = db.RegisteredPayments
+                    .Where(rp => rp.accountNumberFrom.Equals(oldAccountNumber)).ToList();
+                
+                foreach (DbRegisteredPayment dbrp in registeredAccounts)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        "RegisteredPayment old AccountNumber: " + dbrp.accountNumberFrom);
+                    dbrp.accountNumberFrom = account.accountNumber;
+                    db.SaveChanges();
+                    System.Diagnostics.Debug.WriteLine(
+                        "RegisteredPayment new AccountNumber: " + dbrp.accountNumberFrom);
+                }
+
+                if (dbaccount != null)
+                {
+                    dbaccount.accountNumber = account.accountNumber;
+                    dbaccount.balance = account.balance;
+                    db.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+        }
         public bool adminEditCustomer(Customer customer)
         {
             using (var db = new BankDBContext())
@@ -617,6 +645,28 @@ namespace DAL
             {
                 System.Diagnostics.Debug.WriteLine("DB ERROR: " + feil.ToString());
                 return null;
+            }
+        }
+
+        public Account findAccount(string accNumber)
+        {
+            var db = new BankDBContext();
+
+            var foundAccount = db.Accounts.FirstOrDefault(pk => pk.accountNumber.Equals(accNumber));
+            System.Diagnostics.Debug.WriteLine("TEST DAL FINDACCOUNT: " + foundAccount.accountNumber);
+            if (foundAccount == null)
+            {
+                return null;
+            }
+            else
+            {
+                var account = new Account()
+                {
+                    accountNumber = foundAccount.accountNumber,
+                    balance = foundAccount.balance,
+                    nID = foundAccount.NID
+                };
+                return account;
             }
         }
 

@@ -46,7 +46,7 @@ namespace BLL
             BankCustomerDAL db = new BankCustomerDAL();
             return db.getIssuedPayments(accountNumber);
         }
-                                             
+
         public string getRegisteredPaymentAccount(int id)
         {
             BankCustomerDAL db = new BankCustomerDAL();
@@ -98,10 +98,22 @@ namespace BLL
             return db.deleteAccount(accountNumber);
         }
 
+        public bool adminEditAccount(Account account, string oldAccountNumber)
+        {
+            BankAdminDAL db = new BankAdminDAL();
+            return db.adminEditAccount(account, oldAccountNumber);
+        }
+
         public bool adminEditCustomer(Customer customer)
         {
             BankAdminDAL db = new BankAdminDAL();
             return db.adminEditCustomer(customer);
+        }
+
+        public Account findAccount(string accNumber)
+        {
+            BankAdminDAL db = new BankAdminDAL();
+            return db.findAccount(accNumber);
         }
 
         public bool adminRegisterCustomer(Customer inCustomer)
