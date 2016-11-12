@@ -103,8 +103,14 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\jquery-ui.structure.css" />
+    <Content Include="Content\mini1f.png" />
+    <Content Include="Content\mini2f.png" />
+    <Content Include="Content\mini3f.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\custom.css" />
+    <Content Include="Content\slideshow\1.jpg" />
+    <Content Include="Content\slideshow\2.jpg" />
+    <Content Include="Content\slideshow\3.jpg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -161,9 +167,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\slideshow\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
       <Project>{38bbbb1f-5359-4811-a212-43ef49455b69}</Project>
