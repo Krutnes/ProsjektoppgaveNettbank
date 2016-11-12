@@ -7,12 +7,13 @@
     <script src="~/Scripts/jquery-3.1.1.js"></script>
     <script src="~/Scripts/jquery-ui.js"></script>
     <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/custom.js"></script>
     <link href="~/Content/jquery-ui.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
 </head>
 <body>
@@ -32,7 +33,7 @@
                 @Html.ActionLink("Admin Login", "AdminLogin", new { area = "" }, new { @class = "navbar-brand" })
                 }
             </div>
-            <div class="navbar-collapse">
+            <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     @if ((bool)Session["LoggedIn"])
                     {
@@ -42,7 +43,6 @@
                     else
                     {
                         <ul class="nav pull-right">
-                            <li><a href="/users/sign_up">Sign Up</a></li>
                             <li class="divider-vertical"></li>
                             <li class="dropdown">
                                 <a class="dropdown-toggle" href="#" data-toggle="dropdown">Sign In <strong class="caret"></strong></a>
