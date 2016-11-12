@@ -458,27 +458,6 @@ namespace DAL
             }
         }
 
-        public bool adminEditCustomer(Customer customer)
-        {
-            using (var db = new BankDBContext())
-            {
-                DbCustomer dbcustomer = db.Customers.FirstOrDefault(c => c.NID == customer.nID);
-                if (dbcustomer != null)
-                {
-                    dbcustomer.firstName = customer.firstName;
-                    dbcustomer.lastName = customer.lastName;
-                    string salt = generateSalt();
-                    string passwordAndSalt = customer.password + salt;
-                    byte[] hashedpassword = generateHash(passwordAndSalt);
-                    dbcustomer.password = hashedpassword;
-                    dbcustomer.salt = salt;
-                    db.SaveChanges();
-                    return true;
-                }
-                return false;
-            }
-        }
-
         public void populateDatabase()
         {
             var db = new BankDBContext();
