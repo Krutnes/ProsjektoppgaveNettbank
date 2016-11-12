@@ -41,6 +41,12 @@ namespace BLL
             return db.editPayment(payment);
         }
 
+        public bool adminEditCustomer(Customer customer)
+        {
+            BankDAL db = new BankDAL();
+            return db.adminEditCustomer(customer);
+        }
+
         public bool deletePayment(int id)
         {
             BankDAL db = new BankDAL();
@@ -108,6 +114,18 @@ namespace BLL
             BankDAL db = new BankDAL();
 
             return db.deleteAccount(accountNumber);
+        }
+
+        public bool AdminRegisterCustomer(Customer inCustomer)
+        {
+            BankDAL db = new BankDAL();
+            return db.adminRegisterCustomer(inCustomer);
+        }
+
+        public List<Account> newAccount(string nID)
+        {
+            BankDAL db = new BankDAL();
+            return db.newAccount(nID);
         }
     }
 

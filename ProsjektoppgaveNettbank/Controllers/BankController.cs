@@ -18,11 +18,11 @@ namespace ProsjektoppgaveNettbank.Controllers
             if (Session["LoggedIn"] == null)
             {
                 Session["LoggedIn"] = false;
-                ViewBag.LoggedIn = false;
             }
             else
             {
-                ViewBag.LoggedIn = (bool)Session["LoggedIn"];
+                if ((bool)Session["LoggedIn"])
+                    return RedirectToAction("AccountOverview", "Bank");
             }
             return View();
         }
@@ -34,7 +34,6 @@ namespace ProsjektoppgaveNettbank.Controllers
             if (bankBLL.isLoginCorrect(customer))
             {
                 Session["LoggedIn"] = true;
-                ViewBag.LoggedIn = true;
                 Session["NID"] = customer.nID;
                 return RedirectToAction("AccountOverview", "Bank");
             }
@@ -54,8 +53,8 @@ namespace ProsjektoppgaveNettbank.Controllers
         {
             if (Session["LoggedIn"] != null)
             {
-                bool LoggedIn = (bool)Session["LoggedIn"];
-                if (LoggedIn)
+                bool loggedIn = (bool)Session["LoggedIn"];
+                if (loggedIn)
                 {
                     return View();
                 }
@@ -68,14 +67,15 @@ namespace ProsjektoppgaveNettbank.Controllers
         {
             if (Session["LoggedIn"] != null)
             {
-                bool LoggedIn = (bool)Session["LoggedIn"];
-                if (LoggedIn)
+                bool loggedIn = (bool)Session["LoggedIn"];
+                if (loggedIn)
                 {
                     var bankBLL = new BankBLL();
                     RegisteredPayment payment = bankBLL.findRegisteredPayment(Convert.ToInt32(id));
                     return View(payment);
                 }
             }
+            Session["LoggedIn"] = null;
             return RedirectToAction("BankIndex", "Bank");
         }
 
@@ -88,18 +88,20 @@ namespace ProsjektoppgaveNettbank.Controllers
 
             return RedirectToAction("AccountOverview", "Bank");
         }
+        
 
         public ActionResult RegisterSinglePayment(string id)
         {
             if (Session["LoggedIn"] != null)
             {
-                bool LoggedIn = (bool)Session["LoggedIn"];
-                if (LoggedIn)
+                bool loggedIn = (bool)Session["LoggedIn"];
+                if (loggedIn)
                 {
                     Session["accountNumber"] = id;
                     return View();
                 }
             }
+            Session["LoggedIn"] = null;
             return RedirectToAction("BankIndex", "Bank");
         }
 
@@ -109,12 +111,15 @@ namespace ProsjektoppgaveNettbank.Controllers
         {
             if (Session["LoggedIn"] == null || Session["accountNumber"] == null)
             {
+                Session["LoggedIn"] = null;
+                Session["accountNumber"] = null;
                 return RedirectToAction("BankIndex", "Bank");
             }
             registeredPayment.accountNumberFrom = (string) Session["accountNumber"];
             var bankBLL = new BankBLL();
-            bankBLL.registerPayment(registeredPayment);
-            ViewBag.AccountNumber = registeredPayment.accountNumberFrom;
+            if (!bankBLL.registerPayment(registeredPayment))
+                return RedirectToAction("RegisterSinglePayment", "Bank");
+            Session["accountNumber"] = null;
             return RedirectToAction("AccountOverview", "Bank");
         }
 
@@ -124,9 +129,9 @@ namespace ProsjektoppgaveNettbank.Controllers
             string currentAccount = bankBLL.getRegisteredPaymentAccount(Convert.ToInt32(id));
 
             bankBLL.deletePayment(Convert.ToInt32(id));
-            string allRegisteredPayments = getRegisteredPayments(currentAccount);
+            string allRegisteredPaymentsJSON = getRegisteredPayments(currentAccount);
 
-            return allRegisteredPayments;
+            return allRegisteredPaymentsJSON;
         }
 
         public string getCustomerAccounts()
@@ -150,22 +155,16 @@ namespace ProsjektoppgaveNettbank.Controllers
         public ActionResult LogOut()
         {
             Session["LoggedIn"] = null;
-            ViewBag.LoggedIn = null;
             Session["NID"] = null;
             return RedirectToAction("BankIndex", "Bank");
         }
 
+
+        // GJØR SESSION OG DELING AV ADMIN/KUNDE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         public ActionResult AdminLogin()
         {
-            if (Session["AdminLoggedIn"] == null)
-            {
-                Session["AdminLoggedIn"] = false;
-                ViewBag.AdminLoggedIn = false;
-            }
-            else
-            {
-                ViewBag.AdminLoggedIn = (bool)Session["AdminLoggedIn"];
-            }
+            if (Session["AdminLoggedIn"] != null && (bool)Session["AdminLoggedIn"])
+                    return RedirectToAction("AdminOverview", "Bank");
             return View();
         }
 
@@ -176,12 +175,9 @@ namespace ProsjektoppgaveNettbank.Controllers
             if (bankBLL.isAdminLoginCorrect(admin))
             {
                 Session["AdminLoggedIn"] = true;
-                ViewBag.AdminLoggedIn = true;
-                Session["ID"] = admin.ID;
                 return RedirectToAction("AdminOverview", "Bank");
             }
-            Session["AdminLoggedIn"] = false;
-            ViewBag.AdminLoggedIn = false;
+            Session["AdminLoggedIn"] = null;
             return View();
         }
 
@@ -197,7 +193,8 @@ namespace ProsjektoppgaveNettbank.Controllers
                     return View(allCustomers);
                 }
             }
-            return RedirectToAction("BankIndex", "Bank");
+            Session["AdminLoggedIn"] = null;
+            return RedirectToAction("AdminLogin", "Bank");
         }
         
 
@@ -218,11 +215,18 @@ namespace ProsjektoppgaveNettbank.Controllers
 
         public ActionResult AdminCustomerDetails(string nid)
         {
-            var bankBLL = new BankBLL();
-            Customer customer = bankBLL.findCustomer(nid);
-            List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
-
-            return View(customerAccounts);
+            if (Session["AdminLoggedIn"] != null)
+            {
+                if ((bool)Session["AdminLoggedIn"])
+                {
+                    var bankBLL = new BankBLL();
+                    List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
+                    ViewBag.NID = (String)nid;
+                    return View(customerAccounts);
+                }
+            }
+            Session["AdminLoggedIn"] = null;
+            return RedirectToAction("AdminLogin", "Bank");
         }
 
         public string AdminDeleteBankAccount(string accountNumber)
@@ -235,10 +239,59 @@ namespace ProsjektoppgaveNettbank.Controllers
             var jsonSerializer = new JavaScriptSerializer();
             return jsonSerializer.Serialize(remainingAccounts);
         }
-
-        public ActionResult AdminEditCustomer()
+        
+        public ActionResult AdminEditCustomer(string nid)
         {
-            return View();
+            if (Session["AdminLoggedIn"] != null)
+            {
+                if ((bool)Session["AdminLoggedIn"])
+                {
+                    var bankBLL = new BankBLL();
+                    Customer customer = bankBLL.findCustomer(nid);
+                    return View(customer);
+                }
+            }
+            Session["AdminLoggedIn"] = null;
+            return RedirectToAction("AdminLogin", "Bank");
+        }
+        
+        [HttpPost]
+        public ActionResult AdminEditCustomer(Customer customer)
+        {
+            var bankBLL = new BankBLL(); ;
+            if (!bankBLL.adminEditCustomer(customer))
+                return View(customer);
+            
+            return RedirectToAction("AdminOverview", "Bank");
+        }
+
+        public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
+        {
+            if (Session["AdminLoggedIn"] != null && (bool)Session["AdminLoggedIn"])
+                return View();
+            
+            Session["AdminLoggedIn"] = null;
+            return RedirectToAction("AdminLogin", "Bank");
+        }
+
+        [HttpPost]
+        public ActionResult AdminRegisterCustomer(Customer inCustomer)
+        {
+            var db = new BankBLL();
+            string password = inCustomer.password;
+            if (!db.AdminRegisterCustomer(inCustomer))
+                return View(inCustomer);
+            return RedirectToAction("AdminOverview");
+        }
+
+        public string AdminCreateNewAccount(string nid)
+        {
+            BankBLL bankBLL = new BankBLL();
+            List<Account> customerAccounts = bankBLL.newAccount(nid);
+            var jsonSerializer = new JavaScriptSerializer();
+            return jsonSerializer.Serialize(customerAccounts);
+            
+
         }
     }
 }

@@ -38,8 +38,8 @@ namespace Models
         [RegularExpression("[\\d]{11}")]
         [Required(ErrorMessage = "Account number must be 11 digits")]
         public string accountNumber { get; set; }
-        
         public double balance { get; set; }
+        public string nID { get; set; }
     }
 
     public class RegisteredPayment
