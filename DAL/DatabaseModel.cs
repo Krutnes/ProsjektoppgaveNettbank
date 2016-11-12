@@ -4,13 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Linq;
-using System.Web;
 
 namespace Models
 {
     public class DbAdmin
     {
+        [Key]
         public string ID { get; set; }
         public byte[] adminpassword { get; set; }
         public string adminsalt { get; set; }
@@ -40,37 +39,40 @@ namespace Models
     {
         [Key]
         public int id { get; set; }
-        public string accountNumberFrom { get; set; }
-        public string accountNumberTo { get; set; }
+        public string customerAccountNumber { get; set; }
+        public string targetAccountNumber { get; set; }
         public string receiverName { get; set; }
         public double amount { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime paymentDate { get; set; }
-        public virtual DbAccount fromAccount { get; set; }
+        public virtual DbAccount customerAccountNumberFK { get; set; }
+        public virtual DbAccount targetAccountNumberFK { get; set; }
     }
 
     public class DbIssuedPayment
     {
         [Key]
         public int id { get; set; }
-        public string accountNumberFrom { get; set; }
-        public string accountNumberTo { get; set; }
+        public string customerAccountNumber { get; set; }
+        public string targetAccountNumber { get; set; }
         public string receiverName { get; set; }
         public double amount { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime issuedDate { get; set; }
-        public virtual DbAccount account { get; set; }
+        public virtual DbAccount customerAccountNumberFK { get; set; }
+        public virtual DbAccount targetAccountNumberFK { get; set; }
     }
 
     public class DbAccountChangesLog
     {
         public int NID { get; set; }
         public DateTime date { get; set; }
-        public bool isInboundPayment { get; set; }
-        public string accountNumberIn { get; set; }
-        public string accountNumberOut { get; set; }
+        public string customertAccountNumber { get; set; }
+        public string targetAccountNumber { get; set; }
+        public virtual DbAccount customerAccountNumberFK { get; set; }
+        public virtual DbAccount targetAccountNumberFK { get; set; }
     }
 
     public class BankDBContext : DbContext

@@ -20,6 +20,8 @@ namespace ProsjektoppgaveNettbank.Controllers
                 bool loggedIn = (bool)Session["LoggedIn"];
                 if (loggedIn)
                 {
+                    BankCustomerBLL bll = new BankCustomerBLL();
+                    bll.updatePendingPayments();
                     return View();
                 }
             }
@@ -150,8 +152,10 @@ namespace ProsjektoppgaveNettbank.Controllers
                 Session["accountNumber"] = null;
                 return RedirectToAction("BankIndex", "Bank");
             }
-            registeredPayment.accountNumberFrom = (string)Session["accountNumber"];
+            registeredPayment.cutomerAccountNumber = (string)Session["accountNumber"];
             var bankBLL = new BankCustomerBLL();
+            registeredPayment.amount = -((double)registeredPayment.amount);
+            
             if (!bankBLL.registerPayment(registeredPayment))
                 return RedirectToAction("RegisterSinglePayment", "Bank");
             Session["accountNumber"] = null;

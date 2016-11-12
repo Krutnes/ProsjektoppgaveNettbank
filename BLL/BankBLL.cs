@@ -76,6 +76,12 @@ namespace BLL
             BankCustomerDAL db = new BankCustomerDAL();
             return db.registerPayment(payment);
         }
+
+        public void updatePendingPayments()
+        {
+            BankCustomerDAL db = new BankCustomerDAL();
+            db.updatePendingPayments();
+        }
     }
 
     public class BankAdminBLL
@@ -128,5 +134,4 @@ namespace BLL
             return db.newAccount(nID);
         }
     }
-
 }
