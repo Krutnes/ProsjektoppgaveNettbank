@@ -364,6 +364,28 @@ namespace DAL
             return remainingAccounts;
         }
 
+        public Account findAccount(string accNumber)
+        {
+            var db = new BankDBContext();
+
+            var foundAccount = db.Accounts.FirstOrDefault(pk => pk.accountNumber.Equals(accNumber));
+            System.Diagnostics.Debug.WriteLine("TEST DAL FINDACCOUNT: " + foundAccount.accountNumber);
+            if (foundAccount == null)
+            {
+                return null;
+            }
+            else
+            {
+                var account = new Account()
+                {
+                    accountNumber = foundAccount.accountNumber,
+                    balance = foundAccount.balance,
+                    nID = foundAccount.NID
+                };
+                return account;
+            }
+        }
+
         public bool adminRegisterCustomer(Customer inCustomer)
         {
             var newCustomer = new DbCustomer()
@@ -458,20 +480,26 @@ namespace DAL
             }
         }
 
-        public bool adminEditCustomer(Customer customer)
+        public bool adminEditAccount(Account account, string oldAccountNumber) // LOG PLEASE
         {
             using (var db = new BankDBContext())
             {
-                DbCustomer dbcustomer = db.Customers.FirstOrDefault(c => c.NID == customer.nID);
-                if (dbcustomer != null)
+                DbAccount dbaccount = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(oldAccountNumber));
+                System.Diagnostics.Debug.WriteLine("TEST DAL ACCOUNT: " + dbaccount.accountNumber);
+                IEnumerable<DbRegisteredPayment> registeredAccounts = db.RegisteredPayments
+                    .Where(rp => rp.accountNumberFrom.Equals(oldAccountNumber)).ToList();
+                System.Diagnostics.Debug.WriteLine("TEST DAL LIST COUNT: " + registeredAccounts.Count());
+                foreach (DbRegisteredPayment dbrp in registeredAccounts)
                 {
-                    dbcustomer.firstName = customer.firstName;
-                    dbcustomer.lastName = customer.lastName;
-                    string salt = generateSalt();
-                    string passwordAndSalt = customer.password + salt;
-                    byte[] hashedpassword = generateHash(passwordAndSalt);
-                    dbcustomer.password = hashedpassword;
-                    dbcustomer.salt = salt;
+                    dbrp.accountNumberFrom = dbaccount.accountNumber;
+                    //legg til ting fra linken jeg sendte (tror jeg, jeg har ikke kommet så langt)
+                    db.SaveChanges();
+                }
+                
+                if (dbaccount != null)
+                {
+                    dbaccount.accountNumber = account.accountNumber;
+                    dbaccount.balance = account.balance;
                     db.SaveChanges();
                     return true;
                 }
@@ -679,6 +707,7 @@ namespace DAL
                 System.Diagnostics.Debug.WriteLine("Feil i DB" + e.ToString());
             }
         }
+
         public void ErrorReport(string error)
         {
             string path = Environment.CurrentDirectory + @"\ErrorLog";

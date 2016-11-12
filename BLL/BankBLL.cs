@@ -47,6 +47,12 @@ namespace BLL
             return db.adminEditCustomer(customer);
         }
 
+        public bool adminEditAccount(Account account, string oldAccountNumber)
+        {
+            BankDAL db = new BankDAL();
+            return db.adminEditAccount(account, oldAccountNumber);
+        }
+
         public bool deletePayment(int id)
         {
             BankDAL db = new BankDAL();
@@ -87,6 +93,12 @@ namespace BLL
         {
             BankDAL db = new BankDAL();
             return db.findCustomer(nID);
+        }
+
+        public Account findAccount(string accNumber)
+        {
+            BankDAL db = new BankDAL();
+            return db.findAccount(accNumber);
         }
 
         public bool isAdminLoginCorrect(Admin admin)

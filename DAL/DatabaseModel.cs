@@ -28,6 +28,8 @@ namespace Models
 
     public class DbAccount
     {
+        [Key]
+        public int id { get; set; }
         public string accountNumber { get; set; }
         public double balance { get; set; }
         public string NID { get; set; }
@@ -89,7 +91,6 @@ namespace Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DbCustomer>().HasKey(s => s.NID);
-            modelBuilder.Entity<DbAccount>().HasKey(s => s.accountNumber);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
     }
