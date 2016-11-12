@@ -502,17 +502,21 @@ namespace DAL
                 DbAccount dbaccount = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(oldAccountNumber));
                 System.Diagnostics.Debug.WriteLine("TEST DAL ACCOUNT: " + dbaccount.accountNumber);
 
-                IEnumerable<DbRegisteredPayment> registeredAccounts = db.RegisteredPayments
-                    .Where(rp => rp.accountNumberFrom.Equals(oldAccountNumber)).ToList();
-                
-                foreach (DbRegisteredPayment dbrp in registeredAccounts)
+                //customerAccountNumber from DbIssuedPayments
+                IEnumerable<DbIssuedPayment> issuedPayments = db.IssuedPayments
+                   .Where(ip => ip.customerAccountNumber.Equals(oldAccountNumber)).ToList();
+                foreach (DbIssuedPayment dbip in issuedPayments)
                 {
-                    System.Diagnostics.Debug.WriteLine(
-                        "RegisteredPayment old AccountNumber: " + dbrp.accountNumberFrom);
-                    dbrp.accountNumberFrom = account.accountNumber;
+                    dbip.customerAccountNumber = account.accountNumber;
                     db.SaveChanges();
-                    System.Diagnostics.Debug.WriteLine(
-                        "RegisteredPayment new AccountNumber: " + dbrp.accountNumberFrom);
+                }
+                //customerAccountNumber from DbRegisteredPayments 
+                IEnumerable<DbRegisteredPayment> registeredPayments = db.RegisteredPayments
+                    .Where(rp => rp.customerAccountNumber.Equals(oldAccountNumber)).ToList();
+                foreach (DbRegisteredPayment dbrp in registeredPayments)
+                {
+                    dbrp.customerAccountNumber = account.accountNumber;
+                    db.SaveChanges();
                 }
 
                 if (dbaccount != null)
