@@ -25,7 +25,6 @@ namespace DAL
                 }
                 catch (Exception e)
                 {
-                    
                     return false;
                 }
             }
@@ -39,12 +38,19 @@ namespace DAL
                     FirstOrDefault(rp => rp.id == payment.id);
                 if (regPayment != null)
                 {
-                    regPayment.customerAccountNumber = payment.cutomerAccountNumber;
-                    regPayment.targetAccountNumber = payment.targetAccountNumber;
-                    regPayment.amount = payment.amount;
-                    regPayment.paymentDate = payment.paymentDate;
-                    db.SaveChanges();
-                    return true;
+                    try
+                    {
+                        regPayment.customerAccountNumber = payment.cutomerAccountNumber;
+                        regPayment.targetAccountNumber = payment.targetAccountNumber;
+                        regPayment.amount = payment.amount;
+                        regPayment.paymentDate = payment.paymentDate;
+                        db.SaveChanges();
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        return false;
+                    }
                 }
                 return false;
             }
@@ -372,52 +378,211 @@ namespace DAL
         public void populatePaymentTables()
         {
             BankDBContext db = new BankDBContext();
-            DbAccount trumpAccount = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals("05390000000"));
-            if (trumpAccount == null)
+            DbAccount trumpAccount000 = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals("05390000000"));
+            DbAccount trumpAccount999 = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals("05399999999"));
+            DbAccount trumpAccount111 = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals("05391111111"));
+
+            DbAccount rokkeAccount777 = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals("05397777777"));
+            DbAccount rokkeAccount888 = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals("05398888888"));
+
+            DbAccount hillaryAccount666 = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals("05396666666"));
+            
+            
+            if (trumpAccount000 == null || trumpAccount999 == null || trumpAccount111 == null || 
+                rokkeAccount777 == null || rokkeAccount888 == null || hillaryAccount666 == null)
                 return;
-            // Trump
-            DbRegisteredPayment payment01 = new DbRegisteredPayment()
+            
+            // Trump pending payments
+            DbRegisteredPayment trumpPayment01 = new DbRegisteredPayment()
             {
                 //Account1
                 customerAccountNumber = "05390000000",
-                targetAccountNumber = "00000000001",
+                targetAccountNumber = "05397777777",
                 amount = -75.00,
-                receiverName = "S. Jon R.",
-                paymentDate = new DateTime(2016, 10, 22),
-                customerAccountNumberFK = trumpAccount
+                receiverName = "Kjell Inge Røkke",
+                paymentDate = new DateTime(2016, 11, 25),
+                customerAccountNumberFK = trumpAccount000,
+                targetAccountNumberFK = rokkeAccount777
             }; //END OF payment1
 
-            DbRegisteredPayment payment02 = new DbRegisteredPayment()
+            DbRegisteredPayment trumpPayment02 = new DbRegisteredPayment()
             {
                 //Account2
                 customerAccountNumber = "05390000000",
-                targetAccountNumber = "00000000002",
+                targetAccountNumber = "05396666666",
                 amount = -75.00,
-                receiverName = "A Krutnes",
-                paymentDate = new DateTime(2016, 10, 23),
-                customerAccountNumberFK = trumpAccount
+                receiverName = "Hillary \"Hilldog\" Clinton",
+                paymentDate = new DateTime(2016, 11, 25),
+                customerAccountNumberFK = trumpAccount000,
+                targetAccountNumberFK = hillaryAccount666
             }; //END OF payment02
 
-            DbRegisteredPayment payment03 = new DbRegisteredPayment()
+            DbRegisteredPayment trumpPayment03 = new DbRegisteredPayment()
             {
                 //Account3
                 customerAccountNumber = "05390000000",
-                targetAccountNumber = "00000000003",
+                targetAccountNumber = "05398888888",
                 amount = -75.00,
-                receiverName = "Mirko Grimm",
-                paymentDate = new DateTime(2016, 10, 24),
-                customerAccountNumberFK = trumpAccount
+                receiverName = "Kjell Inge Røkke",
+                paymentDate = new DateTime(2016, 11, 25),
+                customerAccountNumberFK = trumpAccount000,
+                targetAccountNumberFK = rokkeAccount888
             }; //END OF payment03
+            // END of Trump payments
+
+            // Hillary Clinton pending payments
+            DbRegisteredPayment hildogPayment01 = new DbRegisteredPayment()
+            {
+                //Account1
+                customerAccountNumber = "05396666666",
+                targetAccountNumber = "05397777777",
+                amount = -75.00,
+                receiverName = "Kjell Inge Røkke",
+                paymentDate = new DateTime(2016, 11, 25),
+                customerAccountNumberFK = trumpAccount000,
+                targetAccountNumberFK = rokkeAccount777
+            }; //END OF payment1
+
+            DbRegisteredPayment hildogPayment02 = new DbRegisteredPayment()
+            {
+                //Account2
+                customerAccountNumber = "05396666666",
+                targetAccountNumber = "05390000000",
+                amount = -75.00,
+                receiverName = "Donald Trump",
+                paymentDate = new DateTime(2016, 11, 25),
+                customerAccountNumberFK = trumpAccount000,
+                targetAccountNumberFK = hillaryAccount666
+            }; //END OF payment02
+
+            DbRegisteredPayment hildogPayment03 = new DbRegisteredPayment()
+            {
+                //Account3
+                customerAccountNumber = "05396666666",
+                targetAccountNumber = "05398888888",
+                amount = -75.00,
+                receiverName = "Kjell Inge Røkke",
+                paymentDate = new DateTime(2016, 11, 25),
+                customerAccountNumberFK = trumpAccount000,
+                targetAccountNumberFK = rokkeAccount888
+            }; //END OF payment03
+            // END of Hillary payments
+
+            // Adding transaction history
+            // Payment history for Røkke
+            DbIssuedPayment rokkeIssuedPayment01 = new DbIssuedPayment()
+            {
+                customerAccountNumber = "05397777777",
+                targetAccountNumber = "05396666666",
+                receiverName = "Hillary Clinton",
+                amount = 3593.93,
+                issuedDate = new DateTime(2016, 10, 27),
+                customerAccountNumberFK = rokkeAccount777,
+                targetAccountNumberFK = hillaryAccount666
+            };
+
+            DbIssuedPayment rokkeIssuedPayment02 = new DbIssuedPayment()
+            {
+                customerAccountNumber = "05397777777",
+                targetAccountNumber = "05399999999",
+                receiverName = "Donald Trump",
+                amount = 3593.93,
+                issuedDate = new DateTime(2016, 10, 27),
+                customerAccountNumberFK = rokkeAccount777,
+                targetAccountNumberFK = trumpAccount999
+            };
+            // END OF røkke payments
+
+            // Payment history for Trump
+            DbIssuedPayment trumpIssuedPayment01 = new DbIssuedPayment()
+            {
+                customerAccountNumber = "05397777777",
+                targetAccountNumber = "05396666666",
+                receiverName = "Hillary Clinton",
+                amount = 3593.93,
+                issuedDate = new DateTime(2016, 10, 27),
+                customerAccountNumberFK = rokkeAccount777,
+                targetAccountNumberFK = hillaryAccount666
+            };
+
+            DbIssuedPayment trumpIssuedPayment02 = new DbIssuedPayment()
+            {
+                customerAccountNumber = "05390000000",
+                targetAccountNumber = "05397777777",
+                receiverName = "Kjell Inge Røkke",
+                amount = -2000.22,
+                issuedDate = new DateTime(2016, 10, 27),
+                customerAccountNumberFK = trumpAccount000,
+                targetAccountNumberFK = rokkeAccount777
+            };
+
+            DbIssuedPayment trumpIssuedPayment03 = new DbIssuedPayment()
+            {
+                customerAccountNumber = "05391111111",
+                targetAccountNumber = "05398888888",
+                receiverName = "Kjell Inge Røkke",
+                amount = -2000.22,
+                issuedDate = new DateTime(2016, 10, 27),
+                customerAccountNumberFK = trumpAccount111,
+                targetAccountNumberFK = rokkeAccount888
+            };
+            // END OF Trump payments
             try
             {
-                db.RegisteredPayments.Add(payment01);
-                db.RegisteredPayments.Add(payment02);
-                db.RegisteredPayments.Add(payment03);
+                db.RegisteredPayments.Add(trumpPayment01);
+                db.RegisteredPayments.Add(trumpPayment02);
+                db.RegisteredPayments.Add(trumpPayment03);
+                db.RegisteredPayments.Add(hildogPayment01);
+                db.RegisteredPayments.Add(hildogPayment02);
+                db.RegisteredPayments.Add(hildogPayment03);
+                db.IssuedPayments.Add(rokkeIssuedPayment01);
+                db.IssuedPayments.Add(rokkeIssuedPayment02);
+                db.IssuedPayments.Add(trumpIssuedPayment01);
+                db.IssuedPayments.Add(trumpIssuedPayment02);
+                db.IssuedPayments.Add(trumpIssuedPayment03);
                 db.SaveChanges();
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("Feil i DB" + e.ToString());
+                System.Diagnostics.Debug.WriteLine("Error in  DB" + e.ToString());
+            }
+        }
+
+        public void processRegisteredPayment(DbRegisteredPayment payment)
+        {
+            using (var db = new BankDBContext())
+            {
+                try
+                {
+                    DbAccount customerAccount = db.Accounts.FirstOrDefault(
+                        a => a.accountNumber.Equals(payment.customerAccountNumber));
+                    DbAccount targetAccount = db.Accounts.FirstOrDefault(
+                        a => a.accountNumber.Equals(payment.targetAccountNumber));
+                    DbIssuedPayment ip = new DbIssuedPayment()
+                    {
+                        customerAccountNumber = payment.customerAccountNumber,
+                        targetAccountNumber = payment.targetAccountNumber,
+                        receiverName = payment.receiverName,
+                        amount = payment.amount,
+                        issuedDate = DateTime.Now,
+                        customerAccountNumberFK = customerAccount
+                    };
+                    if (targetAccount != null)
+                        ip.targetAccountNumberFK = targetAccount;
+                    db.IssuedPayments.Add(ip);
+
+                    DbRegisteredPayment test = db.RegisteredPayments.FirstOrDefault(rp => rp.id == payment.id);
+                    db.RegisteredPayments.Remove(test);
+
+                    customerAccount.balance += payment.amount;
+                    db.Entry(customerAccount).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    errorReport(e.ToString());
+                    return;
+                }
             }
         }
 
@@ -453,56 +618,15 @@ namespace DAL
             {
                 try
                 {
-                    List<DbRegisteredPayment> pendingPayments =
-                    db.RegisteredPayments.ToList();
-
-                    //System.Diagnostics.Debug.WriteLine("DAL: registeredpayments: " + pendingPayments.Count());
+                    List<DbRegisteredPayment> pendingPayments = db.RegisteredPayments.ToList();
                     foreach (DbRegisteredPayment currentPayment in pendingPayments)
                     {
                         DateTime date = currentPayment.paymentDate;
-                        if (date < DateTime.Now)
+                        if (date < DateTime.Today)
                         {
                             processRegisteredPayment(currentPayment);
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    errorReport(e.ToString());
-                    return;
-                }
-            }
-        }
-
-        public void processRegisteredPayment(DbRegisteredPayment payment)
-        {
-            using (var db = new BankDBContext())
-            {
-                try
-                {
-                    DbAccount customerAccount = db.Accounts.FirstOrDefault(
-                        a => a.accountNumber.Equals(payment.customerAccountNumber));
-                    DbAccount targetAccount = db.Accounts.FirstOrDefault(
-                        a => a.accountNumber.Equals(payment.targetAccountNumber));
-                    DbIssuedPayment ip = new DbIssuedPayment()
-                    {
-                        customerAccountNumber = payment.customerAccountNumber,
-                        targetAccountNumber = payment.targetAccountNumber,
-                        receiverName = payment.receiverName,
-                        amount = payment.amount,
-                        issuedDate = DateTime.Now,
-                        customerAccountNumberFK = customerAccount
-                    };
-                    if (targetAccount != null)
-                        ip.targetAccountNumberFK = targetAccount;
-                    db.IssuedPayments.Add(ip);
-
-                    DbRegisteredPayment test = db.RegisteredPayments.FirstOrDefault(rp => rp.id == payment.id);
-                    db.RegisteredPayments.Remove(test);
-
-                    customerAccount.balance += payment.amount;
-                    db.Entry(customerAccount).State = System.Data.Entity.EntityState.Modified;
-                    db.SaveChanges();
                 }
                 catch (Exception e)
                 {

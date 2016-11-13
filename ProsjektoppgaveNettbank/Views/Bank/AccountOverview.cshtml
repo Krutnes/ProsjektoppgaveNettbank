@@ -31,9 +31,8 @@
                     dataType: 'json',
                     success: function (registeredPayments)
                     {
-
-                            ShowRegisteredPayments(registeredPayments);
-                        },
+                        ShowRegisteredPayments(registeredPayments);
+                    },
                     error: function (x, y, z)
                     {
                             alert(x + '\n' + y + '\n' + z);
@@ -79,7 +78,6 @@
                     } // end of buttons
                 }); // end of dialog
             })); // end of on click
-
         }) // end of page load
 
         function ShowAccountsDropdown(accounts)
@@ -96,7 +94,7 @@
         {
             var out = "<table id='registered_payments'>" +
                 "<tr>" +
-                    "<th>Payment to</th>" +
+                    "<th>Transaction Account</th>" +
                     "<th>Amount</th>" +
                     "<th>Due date</th>" +
                     "<th> </th>" +
@@ -114,7 +112,7 @@
                 var paymentDateString = (d.getUTCDate() + 1) + "." + (d.getMonth() + 1) + "." + d.getFullYear();
                 out +=
                     "<tr>" +
-                        "<td>" + registeredPayments[i].accountNumberTo +
+                        "<td>" + registeredPayments[i].targetAccountNumber +
                             " (" + registeredPayments[i].receiverName + ")" +
                         "</td>" +
                         "<td>" + registeredPayments[i].amount.toFixed(2) + " NOK</td>" +

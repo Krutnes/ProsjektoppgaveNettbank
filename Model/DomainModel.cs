@@ -61,7 +61,7 @@ namespace Models
         [Required(ErrorMessage = "Amount required")]
         public double amount { get; set; }
         [Display(Name = "Due date:")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd.MM.yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd.mm.yyyy}")]
         [RegularExpression("[\\d]{2}[.][\\d]{2}[.][\\d]{4}", ErrorMessage = "Date must be in this format: 00.00.0000")]
         [Required(ErrorMessage = "Date required")]
         public DateTime paymentDate { get; set; }
