@@ -127,10 +127,11 @@ namespace ProsjektoppgaveNettbank.Controllers
             return json;
         }
 
-        public string getIssuedPaymentsforOneAccount(string nID, int id)
+        public string getIssuedPaymentsforOneAccount(string accountNumberID)
         {
+            string nID = (String)Session["NID"];
             var bankBLL = new BankCustomerBLL();
-            List<IssuedPayment> allIssuedPayments = bankBLL.getIssuedPaymentsforOneAccount(nID,id);
+            List<IssuedPayment> allIssuedPayments = bankBLL.getIssuedPaymentsforOneAccount(accountNumberID);
             var jsonSerializer = new JavaScriptSerializer();
             string json = jsonSerializer.Serialize(allIssuedPayments);
             return json;

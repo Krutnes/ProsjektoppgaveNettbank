@@ -166,13 +166,13 @@ namespace DAL
             }
         }
 
-        public List<IssuedPayment> getIssuedPaymentsforOneAccount(string nID, int id)
+        public List<IssuedPayment> getIssuedPaymentsforOneAccount(string accountNumberID)
         {
             using (var db = new BankDBContext())
             {
                 List<IssuedPayment> issuedPayments = new List<IssuedPayment>();
                 IEnumerable<DbIssuedPayment> dbIssuedPayments = db.IssuedPayments.
-                    Where(a => a.id.Equals(id) && a.customerAccountNumberFK.NID.Equals(nID)).ToList();
+                    Where(a => a.customerAccountNumber.Equals(accountNumberID)).ToList();
                 foreach (DbIssuedPayment issuedPayment in dbIssuedPayments)
                 {
                     issuedPayments.Add(new IssuedPayment()
