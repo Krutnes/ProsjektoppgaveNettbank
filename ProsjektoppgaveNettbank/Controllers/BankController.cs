@@ -127,6 +127,15 @@ namespace ProsjektoppgaveNettbank.Controllers
             return json;
         }
 
+        public string getIssuedPaymentsforOneAccount(string nID, int id)
+        {
+            var bankBLL = new BankCustomerBLL();
+            List<IssuedPayment> allIssuedPayments = bankBLL.getIssuedPaymentsforOneAccount(nID,id);
+            var jsonSerializer = new JavaScriptSerializer();
+            string json = jsonSerializer.Serialize(allIssuedPayments);
+            return json;
+        }
+
         public string getRegisteredPayments(string id)
         {
             var bankBLL = new BankCustomerBLL();

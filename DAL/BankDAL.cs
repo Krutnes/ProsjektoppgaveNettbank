@@ -11,6 +11,7 @@ namespace DAL
 {
     public class BankCustomerDAL
     {
+               
         public bool deletePayment(int id)
         {
             using (var db = new BankDBContext())
@@ -162,6 +163,29 @@ namespace DAL
                     });
                 }
                 return issuedPayments;
+            }
+        }
+
+        public List<IssuedPayment> getIssuedPaymentsforOneAccount(string nID, int id)
+        {
+            using (var db = new BankDBContext())
+            {
+                List<IssuedPayment> issuedPayments = new List<IssuedPayment>();
+                IEnumerable<DbIssuedPayment> dbIssuedPayments = db.IssuedPayments.
+                    Where(a => a.id.Equals(id) && a.customerAccountNumberFK.NID.Equals(nID)).ToList();
+                foreach (DbIssuedPayment issuedPayment in dbIssuedPayments)
+                {
+                    issuedPayments.Add(new IssuedPayment()
+                    {
+                        cutomerAccountNumber = issuedPayment.customerAccountNumber,
+                        targetAccountNumber = issuedPayment.targetAccountNumber,
+                        amount = issuedPayment.amount,
+                        issuedDate = issuedPayment.issuedDate,
+                        receiverName = issuedPayment.receiverName
+                    });
+                }
+                return issuedPayments;
+
             }
         }
 
