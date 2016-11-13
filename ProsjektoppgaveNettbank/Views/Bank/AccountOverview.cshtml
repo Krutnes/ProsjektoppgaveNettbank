@@ -34,7 +34,6 @@
                     dataType: 'json',
                     success: function (registeredPayments)
                     {
-
                         ShowRegisteredPayments(registeredPayments);
                     },
                     error: function (x, y, z)
@@ -177,7 +176,11 @@
    </script>
 </head>
 <body>
+    <br />
+    <br />
+    <p>Choose Account :  </p>
     <select id="accountsDropdown"></select> 
+    <h4><b>Pending payments:</b></h4><br />
     <table id="registered_payments" class="table table-striped table-hover"></table>
     <a href="" id="register_future_payment" bgcolor="grey" 
        class="btn btn-success">Register future payment</a>
@@ -186,6 +189,7 @@
     <div id="delete-payment-confirm" title="Delete registered payment?" hidden>
         <p>Are you sure?</p>
     </div>
+    <h4><b>Transaction History:</b></h4><br />
     <table id="issued_payments_for_one_account" class="table table-striped table-hover"></table>
 </body>
 </html>

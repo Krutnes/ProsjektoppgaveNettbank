@@ -135,17 +135,19 @@ namespace BLL
             return db.adminEditCustomer(customer);
         }
 
+        public bool adminRegisterCustomer(Customer inCustomer)
+        {
+            BankAdminDAL db = new BankAdminDAL();
+            return db.adminRegisterCustomer(inCustomer);
+        }
+
         public Account findAccount(string accNumber)
         {
             BankAdminDAL db = new BankAdminDAL();
             return db.findAccount(accNumber);
         }
 
-        public bool adminRegisterCustomer(Customer inCustomer)
-        {
-            BankAdminDAL db = new BankAdminDAL();
-            return db.adminRegisterCustomer(inCustomer);
-        }
+        
 
         public Customer findCustomer(string nID)
         {

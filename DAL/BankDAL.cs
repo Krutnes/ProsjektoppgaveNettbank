@@ -50,6 +50,7 @@ namespace DAL
                     }
                     catch (Exception e)
                     {
+                        errorReport(e.ToString());
                         return false;
                     }
                 }
@@ -59,7 +60,6 @@ namespace DAL
 
         public static void errorReport(string e)
         {
-
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ErrorLog.txt");
             DateTime currentTime = DateTime.Now;
             string[] lines = { "Error at " + currentTime + ":\n" + e.ToString() + 
@@ -214,6 +214,7 @@ namespace DAL
                 }
                 catch (Exception e)
                 {
+                    errorReport(e.ToString());
                     return null;
                 }
             }
@@ -973,7 +974,7 @@ namespace DAL
             }
         }
 
-        private string generateBankAccountNumber()
+        public string generateBankAccountNumber()
         {
             var chars = "0123456789";
             var stringChars = new char[7];

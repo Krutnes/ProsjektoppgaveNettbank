@@ -1,0 +1,25 @@
+Error at 13-Nov-16 21:29:05:
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at DAL.BankCustomerDAL.processRegisteredPayment(Int32 id) in C:\Dropbox\HiOA\Semester_5\Webapplikasjoner\Obliger\Mappe 2\ProsjektoppgaveNettbank\DAL\BankDAL.cs:line 601
+_________________________________
+
+Error at 13-Nov-16 21:30:52:
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at DAL.BankCustomerDAL.processRegisteredPayment(Int32 id) in C:\Dropbox\HiOA\Semester_5\Webapplikasjoner\Obliger\Mappe 2\ProsjektoppgaveNettbank\DAL\BankDAL.cs:line 601
+_________________________________
+
+Error at 13-Nov-16 21:31:39:
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at DAL.BankCustomerDAL.processRegisteredPayment(Int32 id) in C:\Dropbox\HiOA\Semester_5\Webapplikasjoner\Obliger\Mappe 2\ProsjektoppgaveNettbank\DAL\BankDAL.cs:line 601
+_________________________________
+
+Error at 13-Nov-16 21:31:55:
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at DAL.BankCustomerDAL.processRegisteredPayment(Int32 id) in C:\Dropbox\HiOA\Semester_5\Webapplikasjoner\Obliger\Mappe 2\ProsjektoppgaveNettbank\DAL\BankDAL.cs:line 601
+_________________________________
+
+Error at 13-Nov-16 21:39:58:
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at DAL.BankCustomerDAL.processRegisteredPayment(Int32 id) in C:\Dropbox\HiOA\Semester_5\Webapplikasjoner\Obliger\Mappe 2\ProsjektoppgaveNettbank\DAL\BankDAL.cs:line 602
+_________________________________
+
