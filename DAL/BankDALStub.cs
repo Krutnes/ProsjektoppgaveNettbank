@@ -121,7 +121,37 @@ namespace DAL
                 return false;
             }
         }
+            throw Account IBankAdminDAL.findAccount(string accNumber)
+        {
             throw new NotImplementedException();
+        }
+
+        Customer IBankAdminDAL.findCustomer(string nID)
+        {
+            throw new NotImplementedException();
+        }
+
+        string IBankAdminDAL.generateBankAccountNumber()
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Customer> IBankAdminDAL.getAllCustomers()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IBankAdminDAL.isAdminLoginCorrect(Admin admin)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Account> IBankAdminDAL.newAccount(string nID)
+        {
+            throw new NotImplementedException();
+        }
+
+        new NotImplementedException();
         }
 
         Account IBankAdminDAL.findAccount(string accNumber)

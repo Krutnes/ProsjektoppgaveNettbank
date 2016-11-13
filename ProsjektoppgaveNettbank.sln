@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{38BBBB1F-5359-4811-A212-43EF49455B69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "Enhetstest\UnitTest.csproj", "{7AE79545-82FB-40B3-B78E-332A2670138E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{7AE79545-82FB-40B3-B78E-332A2670138E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
