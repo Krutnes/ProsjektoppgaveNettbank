@@ -50,10 +50,12 @@ namespace DAL
 
         public void errorReport(string error)
         {
+            /*
             string path = Environment.CurrentDirectory + @"\ErrorLog";
             DateTime CurrentTime = DateTime.Now;
             string[] lines = { CurrentTime + "  " + error };
-            System.IO.File.AppendAllLines(path + DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".txt", lines);
+            //System.IO.File.AppendAllLines(path + DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".txt", lines);
+            */
         }
 
         public RegisteredPayment findRegisteredPayment(int id)
