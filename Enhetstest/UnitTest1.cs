@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
+using System.Web.Mvc;
 using Models;
-using ProsjektoppgaveNettbank.Controllers;
 using DAL;
 using BLL;
-using System.Web.Mvc;
+using ProsjektoppgaveNettbank.Controllers;
+using System.Linq;
 
 
 
@@ -13,19 +13,14 @@ namespace UnitTest
     [TestClass]
     public class UnitTest1
     {
-        [TestMethod]
-        public void adminRegisterCustomer()
+
+        public void adminEditAccount()
         {
             // Arrange
             var controller = new BankController(new BankAdminBLL(new BankDALStub()));
-            var newCust = new Customer()
-            {
-                nID = "12345678901",
-                firstName = "Chad",
-                lastName = "Thunder"
-            };
+
             // Act
-            var result = (RedirectToRouteResult)controller.AdminRegisterCustomer();
+            var actionResult = (ViewResult)controller.AdminEditAccount("1");
 
             // Assert
             Assert.AreEqual(result.RouteName, "");
@@ -36,17 +31,14 @@ namespace UnitTest
         {
             // Arrange
             var controller = new BankController(new BankAdminBLL(new BankDALStub()));
-            var adminlogg = new DbAdmin
-            {
-                ID = "1111",
-                adminpassword =
-            };
 
             // Act
-            var actionResult = (RedirectToRouteResult)controller.AdminLogin();
+            var actionResult = (ViewResult)controller.AdminEditAccount("0");
+            var accountResultat = (Account)actionResult.Model;
 
             // Assert
-            Assert.AreEqual(actionResult.RouteValues.Values.First(), "AdminOverview", "Bank");
+            Assert.AreEqual(actionResult.ViewName, "");
+            Assert.AreEqual(accountResultat.accountNumber, 0);
         }
         [TestMethod]
         public void adminDeleteCustomer()

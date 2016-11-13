@@ -9,26 +9,29 @@ namespace Models
     public class Admin
     {
         [Display(Name = "ID")]
-        [Required(ErrorMessage = "ID må oppgis")]
+        [Required(ErrorMessage = "ID Required. Min 4 chars")]
+        [RegularExpression("[\\d]{4,18}", ErrorMessage = "ID Required. Min 4 chars")]
         public string ID { get; set; }
         [Display(Name = "Password")]
-        [Required(ErrorMessage = "Password must be present")]
+        [Required(ErrorMessage = "You're forgetting something crucial.")]
+        [RegularExpression("[a-zA-ZæøåÆØÅ \\d*/@\\-'~?\\+_\\\\=%&$£#]{5,18}")]
         public string adminPassword { get; set; }
     }
 
     public class Customer
     {
         [Display(Name = "National ID")]
-        [Required(ErrorMessage = "Personnummer må oppgis")]
+        [Required(ErrorMessage = "11 digit NID Required")]
         [RegularExpression("[\\d]{11}")]
         public string nID { get; set; }
-        [Required(ErrorMessage = "Last name must be present")]
+        [Required(ErrorMessage = "First name required")]
+        [RegularExpression("[A-ZÆØÅa-zæøå \\d,.'-]{2,50}", ErrorMessage = "Min 2 chars with numbers and (,)(.)(')( )(-) special chars allowed")]
         public string firstName { get; set; }
-        [Required(ErrorMessage = "Last name must be present")]
+        [Required(ErrorMessage = "Last name required")]
+        [RegularExpression("[A-ZÆØÅa-zæøå \\d,.'-]{2,50}", ErrorMessage = "Min 2 chars with numbers and (,)(.)(')( )(-) special chars allowed")]
         public string lastName { get; set; }
-
         [Display(Name = "Password")]
-        [Required(ErrorMessage = "Password must be present")]
+        [Required(ErrorMessage = "Password with 6 min chars required")]
         [RegularExpression("[a-zA-ZæøåÆØÅ \\d*/@\\-'~?\\+_\\\\=%&$£#]{6,50}")]
         public string password { get; set; }
     }
@@ -36,9 +39,11 @@ namespace Models
     public class Account
     {
         public int id { get; set; }
-        [RegularExpression("[\\d]{11}")]
-        [Required(ErrorMessage = "Account number must be 11 digits")]
+        [RegularExpression("[\\d]{11}", ErrorMessage = "Account must be 11 digits")]
+        [Required(ErrorMessage = "11 digit account number required")]
         public string accountNumber { get; set; }
+        [Required(ErrorMessage = "Balance with 2 decimal values required")]
+        [RegularExpression("[0-9]{1,}[.]{1}[0-9]{2}", ErrorMessage = "Balance with 2 decimal values required")]
         public double balance { get; set; }
         public string nID { get; set; }
     }
@@ -53,8 +58,8 @@ namespace Models
         public string targetAccountNumber { get; set; }
         [Display(Name = "Receipient name:")]
         [Required(ErrorMessage = "Receipient name must be present")]
+        [RegularExpression("[A-ZÆØÅa-zæøå \\d,.'-]{2,50}", ErrorMessage ="Min 2 chars with numbers and (,)(.)(')( )(-) special chars allowed")]
         public string receiverName { get; set; }
-
         [Display(Name = "Amount to transfer:")]
         [DisplayFormat(DataFormatString = "{0:F2}", ApplyFormatInEditMode = true)]
         [RegularExpression("[\\d]{1,15}[.]{1}[\\d]{2}", ErrorMessage = "Must be in this format: 00.00")]
@@ -62,7 +67,7 @@ namespace Models
         public double amount { get; set; }
         [Display(Name = "Due date:")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd.MM.yyyy}")]
-        [RegularExpression("[\\d]{2}[.][\\d]{2}[.][\\d]{4}", ErrorMessage = "Date must be in this format: 00.00.0000")]
+        [RegularExpression("[\\d]{2}[.][\\d]{2}[.][\\d]{4}", ErrorMessage = "Date must be in this format: dd.MM.yyyy")]
         [Required(ErrorMessage = "Date required")]
         public DateTime paymentDate { get; set; }
     }

@@ -10,14 +10,29 @@ namespace DAL
 {
     public class BankDALStub : DAL.IBankAdminDAL 
     {
-        public bool adminEditAccount(Account account, string oldAccountNumber)
+        public bool adminEditAccount(Account account, string AccountNumber)
         {
-            throw new NotImplementedException();
+            if (AccountNumber == "1")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool adminEditCustomer(Customer customer)
         {
-            throw new NotImplementedException();
+            if (customer == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            
         }
 
         public bool adminRegisterCustomer(Customer inCustomer)
