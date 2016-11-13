@@ -41,6 +41,12 @@ namespace BLL
             return db.getRegisteredPayments(accountNumber);
         }
 
+        public List<IssuedPayment> getIssuedPaymentsforOneAccount(string accountNumberID)
+        {
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.getIssuedPaymentsforOneAccount(accountNumberID);
+        }
+
         public List<IssuedPayment> getIssuedPayments(string accountNumber)
         {
             BankCustomerDAL db = new BankCustomerDAL();
@@ -71,6 +77,12 @@ namespace BLL
             db.populatePaymentTables();
         }
 
+        public bool registerDirectPayment(IssuedPayment payment)
+        {
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.registerDirectPayment(payment);
+        }
+
         public bool registerPayment(RegisteredPayment payment)
         {
             BankCustomerDAL db = new BankCustomerDAL();
@@ -85,8 +97,20 @@ namespace BLL
 
     }
 
-    public class BankAdminBLL
+    public class BankAdminBLL : BLL.AdminLogic
     {
+        private IBankAdminDAL _repository;
+
+        public BankAdminBLL()
+        {
+            _repository = new BankAdminDAL();
+        }
+
+        public BankAdminBLL(IBankAdminDAL stub)
+        {
+            _repository = stub;
+        }
+
         public List<Customer> adminDeleteCustomer(string nID)
         {
             BankAdminDAL db = new BankAdminDAL();
@@ -111,17 +135,19 @@ namespace BLL
             return db.adminEditCustomer(customer);
         }
 
+        public bool adminRegisterCustomer(Customer inCustomer)
+        {
+            BankAdminDAL db = new BankAdminDAL();
+            return db.adminRegisterCustomer(inCustomer);
+        }
+
         public Account findAccount(string accNumber)
         {
             BankAdminDAL db = new BankAdminDAL();
             return db.findAccount(accNumber);
         }
 
-        public bool adminRegisterCustomer(Customer inCustomer)
-        {
-            BankAdminDAL db = new BankAdminDAL();
-            return db.adminRegisterCustomer(inCustomer);
-        }
+        
 
         public Customer findCustomer(string nID)
         {

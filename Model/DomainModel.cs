@@ -74,11 +74,21 @@ namespace Models
 
     public class IssuedPayment
     {
-        //public int id { get; set; }
+        public int id { get; set; }
         public string cutomerAccountNumber { get; set; }
         public string targetAccountNumber { get; set; }
+        [Display(Name = "Receipient name:")]
+        [Required(ErrorMessage = "Receipient name must be present")]
         public string receiverName { get; set; }
+        [Display(Name = "Amount to transfer:")]
+        [DisplayFormat(DataFormatString = "{0:F2}", ApplyFormatInEditMode = true)]
+        [RegularExpression("[\\d]{1,15}[.]{1}[\\d]{2}", ErrorMessage = "Must be in this format: 00.00")]
+        [Required(ErrorMessage = "Amount required")]
         public double amount { get; set; }
+        [Display(Name = "Due date:")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd.MM.yyyy}")]
+        [RegularExpression("[\\d]{2}[.][\\d]{2}[.][\\d]{4}", ErrorMessage = "Date must be in this format: 00.00.0000")]
+        [Required(ErrorMessage = "Date required")]
         public DateTime issuedDate { get; set; }
     }
 }

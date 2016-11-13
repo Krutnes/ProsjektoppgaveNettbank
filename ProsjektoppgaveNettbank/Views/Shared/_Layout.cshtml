@@ -37,32 +37,18 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    @if ((bool)Session["LoggedIn"] != true)
+                    @if (Session["LoggedIn"] == null || !(bool)Session["LoggedIn"])
                     {
                         @Html.ActionLink("Admin Login", "AdminLogin", new { area = "" }, new { @class = "navbar-brand" })
-                    }
-                     @if ((bool)Session["LoggedIn"])
-                    {
-
-                        <li>@Html.ActionLink("Account Overview", "AccountOverview", new { tom = "" }, new { @class = "navbar-brand" })</li>
-                        <li>@Html.ActionLink("Log Out", "LogOut", new { tom = "" }, new { @class = "navbar-brand" })</li>
-                     }
-                     else
-                     {
 
                         @Html.ActionLink("Log in", "CustomerLogin", new { area = "" }, new { @class = "navbar-brand" })
-<!--
-                         <li class="dropdown">
-                            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><strong>Log in</strong> <span class="caret"></span></a>
-                            <div class="dropdown-menu" role="menu">
-                                
-                            </div>
-                                
-                        </li>
--->
 
                     }
-
+                    @if(Session["LoggedIn"] != null && (bool)Session["LoggedIn"])
+                    {
+                        <li>@Html.ActionLink("Account Overview", "AccountOverview", new { tom = "" }, new { @class = "navbar-brand" })</li>
+                        <li>@Html.ActionLink("Log Out", "LogOut", new { tom = "" }, new { @class = "navbar-brand" })</li>
+                    }
                 </ul>
             </div>
         </div>
