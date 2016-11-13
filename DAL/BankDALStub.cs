@@ -9,9 +9,9 @@ namespace DAL
 {
     public class BankDALStub : DAL.IBankAdminDAL 
     {
-        public bool adminEditAccount(Account account, string oldAccountNumber)
+        public bool adminEditAccount(Account account, string AccountNumber)
         {
-            if (oldAccountNumber == null)
+            if (AccountNumber == "1")
             {
                 return true;
             }

@@ -13,14 +13,14 @@ namespace UnitTest
     [TestClass]
     public class UnitTest1
     {
-       
+
         public void adminEditAccount()
         {
             // Arrange
             var controller = new BankController(new BankAdminBLL(new BankDALStub()));
 
             // Act
-            var actionResult = (ViewResult)controller.Endre(1);
+            var actionResult = (ViewResult)controller.AdminEditAccount("1");
 
             // Assert
             Assert.AreEqual(actionResult.ViewName, "");
@@ -32,32 +32,31 @@ namespace UnitTest
             var controller = new BankController(new BankAdminBLL(new BankDALStub()));
 
             // Act
-            var actionResult = (ViewResult)controller.Endre(0);
-            var kundeResultat = (Kunde)actionResult.Model;
+            var actionResult = (ViewResult)controller.AdminEditAccount("0");
+            var accountResultat = (Account)actionResult.Model;
 
             // Assert
             Assert.AreEqual(actionResult.ViewName, "");
-            Assert.AreEqual(kundeResultat.id, 0);
+            Assert.AreEqual(accountResultat.accountNumber, 0);
         }
         [TestMethod]
         public void adminEditAccount_ikke_funnet_Post()
         {
             // Arrange
             var controller = new BankController(new BankAdminBLL(new BankDALStub()));
-            var innKunde = new Kunde()
+            var accountResultat = new Account()
             {
-                id = 0,
-                fornavn = "Per",
-                etternavn = "Olsen",
-                adresse = "Osloveien 82",
-                postnr = "1234",
-                poststed = "Oslo"
+                accountNumber = "12345678901",
+                balance = 0,
             };
 
             // Act
-            var actionResult = (ViewResult)controller.Endre(0, innKunde);
+            var actionResult = (ViewResult)controller.AdminEditAccount("0");
 
             // Assert
             Assert.AreEqual(actionResult.ViewName, "");
         }
+
+
     }
+}
