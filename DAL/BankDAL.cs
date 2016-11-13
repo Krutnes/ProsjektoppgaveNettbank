@@ -503,16 +503,16 @@ namespace DAL
                 System.Diagnostics.Debug.WriteLine("TEST DAL ACCOUNT: " + dbaccount.accountNumber);
 
                 IEnumerable<DbRegisteredPayment> registeredAccounts = db.RegisteredPayments
-                    .Where(rp => rp.accountNumberFrom.Equals(oldAccountNumber)).ToList();
+                    .Where(rp => rp.customerAccountNumber.Equals(oldAccountNumber)).ToList();
                 
                 foreach (DbRegisteredPayment dbrp in registeredAccounts)
                 {
                     System.Diagnostics.Debug.WriteLine(
-                        "RegisteredPayment old AccountNumber: " + dbrp.accountNumberFrom);
-                    dbrp.accountNumberFrom = account.accountNumber;
+                        "RegisteredPayment old AccountNumber: " + dbrp.customerAccountNumber);
+                    dbrp.customerAccountNumber = account.accountNumber;
                     db.SaveChanges();
                     System.Diagnostics.Debug.WriteLine(
-                        "RegisteredPayment new AccountNumber: " + dbrp.accountNumberFrom);
+                        "RegisteredPayment new AccountNumber: " + dbrp.customerAccountNumber);
                 }
 
                 if (dbaccount != null)
