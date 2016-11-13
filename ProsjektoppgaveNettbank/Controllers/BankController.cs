@@ -337,7 +337,7 @@ namespace ProsjektoppgaveNettbank.Controllers
             return Redirect("/Bank/AdminCustomerDetails/?nid=" + nid);
         }
 
-        public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
+       public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
         {
             if (Session["AdminLoggedIn"] != null && (bool)Session["AdminLoggedIn"])
                 return View();
@@ -345,7 +345,6 @@ namespace ProsjektoppgaveNettbank.Controllers
             Session["AdminLoggedIn"] = null;
             return RedirectToAction("AdminLogin", "Bank");
         }
-
         [HttpPost]
         public ActionResult AdminRegisterCustomer(Customer inCustomer)
         {
