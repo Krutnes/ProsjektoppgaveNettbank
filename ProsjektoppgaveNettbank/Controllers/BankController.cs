@@ -110,6 +110,7 @@ namespace ProsjektoppgaveNettbank.Controllers
                 {
                     var bankBLL = new BankCustomerBLL();
                     RegisteredPayment payment = bankBLL.findRegisteredPayment(Convert.ToInt32(id));
+                    System.Diagnostics.Debug.WriteLine("TEST VIEW: " + payment.cutomerAccountNumber);
                     return View(payment);
                 }
             }
@@ -120,6 +121,7 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult EditPayment(RegisteredPayment registeredPayment)
         {
+            System.Diagnostics.Debug.WriteLine(registeredPayment.amount);
             var bankBLL = new BankCustomerBLL();
             if (!bankBLL.editPayment(registeredPayment))
                 return View(registeredPayment);
@@ -133,6 +135,16 @@ namespace ProsjektoppgaveNettbank.Controllers
             List<Account> allCustomerAccounts = bankBLL.getCustomerAccounts((String)Session["NID"]);
             var jsonSerializer = new JavaScriptSerializer();
             string json = jsonSerializer.Serialize(allCustomerAccounts);
+            return json;
+        }
+
+        public string getIssuedPaymentsforOneAccount(string accountNumberID)
+        {
+            string nID = (String)Session["NID"];
+            var bankBLL = new BankCustomerBLL();
+            List<IssuedPayment> allIssuedPayments = bankBLL.getIssuedPaymentsforOneAccount(accountNumberID);
+            var jsonSerializer = new JavaScriptSerializer();
+            string json = jsonSerializer.Serialize(allIssuedPayments);
             return json;
         }
 
@@ -187,7 +199,7 @@ namespace ProsjektoppgaveNettbank.Controllers
             }
             registeredPayment.cutomerAccountNumber = (string)Session["accountNumber"];
             var bankBLL = new BankCustomerBLL();
-            registeredPayment.amount = -((double)registeredPayment.amount);
+            registeredPayment.amount = -((double) registeredPayment.amount);
             
             if (!bankBLL.registerPayment(registeredPayment))
                 return RedirectToAction("RegisterSinglePayment", "Bank");
@@ -212,6 +224,7 @@ namespace ProsjektoppgaveNettbank.Controllers
                 if ((bool)Session["AdminLoggedIn"])
                 {
                     var bankBLL = new BankCustomerBLL();
+                    bankBLL.updatePendingPayments();
                     List<Account> customerAccounts = bankBLL.getCustomerAccounts(nid);
                     ViewBag.NID = (String)nid;
                     return View(customerAccounts);
@@ -236,8 +249,7 @@ namespace ProsjektoppgaveNettbank.Controllers
         {
             var BankAdminBLL = new BankAdminBLL();
             var jsonSerializer = new JavaScriptSerializer();
-            string json = jsonSerializer.Serialize(BankAdminBLL.adminDeleteCustomer(id));
-            return json;
+            return jsonSerializer.Serialize(BankAdminBLL.adminDeleteCustomer(id));
         }
 
         public ActionResult AdminEditCustomer(string nid)

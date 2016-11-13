@@ -41,6 +41,12 @@ namespace BLL
             return db.getRegisteredPayments(accountNumber);
         }
 
+        public List<IssuedPayment> getIssuedPaymentsforOneAccount(string accountNumberID)
+        {
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.getIssuedPaymentsforOneAccount(accountNumberID);
+        }
+
         public List<IssuedPayment> getIssuedPayments(string accountNumber)
         {
             BankCustomerDAL db = new BankCustomerDAL();
