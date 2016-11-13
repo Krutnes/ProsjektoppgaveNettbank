@@ -9,7 +9,7 @@ using System.Web;
 
 namespace DAL
 {
-    public class BankCustomerDAL
+    public class BankCustomerDAL : IBankCustomerDAL
     {
                
         public bool deletePayment(int id)
@@ -696,7 +696,7 @@ namespace DAL
         }
     }
 
-    public class BankAdminDAL
+    public class BankAdminDAL : IBankAdminDAL
     {
         public bool adminEditAccount(Account account, string oldAccountNumber) 
         {

@@ -97,8 +97,20 @@ namespace BLL
 
     }
 
-    public class BankAdminBLL
+    public class BankAdminBLL : BLL.AdminLogic
     {
+        private IBankAdminDAL _repository;
+
+        public BankAdminBLL()
+        {
+            _repository = new BankAdminDAL();
+        }
+
+        public BankAdminBLL(IBankAdminDAL stub)
+        {
+            _repository = stub;
+        }
+
         public List<Customer> adminDeleteCustomer(string nID)
         {
             BankAdminDAL db = new BankAdminDAL();

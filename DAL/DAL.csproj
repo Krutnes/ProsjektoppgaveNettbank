@@ -51,7 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BankDAL.cs" />
+    <Compile Include="BankDALStub.cs" />
     <Compile Include="DatabaseModel.cs" />
+    <Compile Include="IBankAdminDAL.cs" />
+    <Compile Include="IBankCustomerDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

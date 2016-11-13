@@ -13,6 +13,17 @@ namespace ProsjektoppgaveNettbank.Controllers
 {
     public class BankController : Controller
     {
+        private AdminLogic _BankBLL;
+
+        public BankController()
+        {
+            _BankBLL = new BankAdminBLL();
+        }
+
+        public BankController(AdminLogic stub)
+        {
+            _BankBLL = stub;
+        }
         public ActionResult AccountOverview()
         {
             if (Session["LoggedIn"] != null)
