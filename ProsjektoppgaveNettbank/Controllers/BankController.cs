@@ -45,6 +45,7 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult BankIndex(Customer customer)
         {
+            System.Diagnostics.Debug.WriteLine("TEST " + customer.firstName);
             var bankBLL = new BankCustomerBLL();
             if (bankBLL.isLoginCorrect(customer))
             {
