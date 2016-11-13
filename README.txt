@@ -17,3 +17,9 @@ Admin logg-inn:
 
 Brukernavn: 	1111
 Passord: 		admin
+
+
+Sletting av kunde sluttet å fungere etter diverse endringer i kode. Vi fant ikke ut av feilen.
+
+
+Vi hadde ikke nok tid til å implementere enhetstesting skikkelig.

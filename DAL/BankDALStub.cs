@@ -114,16 +114,12 @@ namespace DAL
         {
             if (nID == null)
             {
-                return "a";
+                return null;
             }
             else
             {
-                return false;
+                return null;
             }
-        }
-            throw Account IBankAdminDAL.findAccount(string accNumber)
-        {
-            throw new NotImplementedException();
         }
 
         Customer IBankAdminDAL.findCustomer(string nID)
@@ -132,34 +128,6 @@ namespace DAL
         }
 
         string IBankAdminDAL.generateBankAccountNumber()
-        {
-            throw new NotImplementedException();
-        }
-
-        List<Customer> IBankAdminDAL.getAllCustomers()
-        {
-            throw new NotImplementedException();
-        }
-
-        bool IBankAdminDAL.isAdminLoginCorrect(Admin admin)
-        {
-            throw new NotImplementedException();
-        }
-
-        List<Account> IBankAdminDAL.newAccount(string nID)
-        {
-            throw new NotImplementedException();
-        }
-
-        new NotImplementedException();
-        }
-
-        Account IBankAdminDAL.findAccount(string accNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        Customer IBankAdminDAL.findCustomer(string nID)
         {
             throw new NotImplementedException();
         }

@@ -806,7 +806,6 @@ namespace DAL
         {
             try
             {
-
                 var db = new BankDBContext();
 
                 DbAccount account = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(accountNumber));
@@ -824,17 +823,17 @@ namespace DAL
                 {
                     db.IssuedPayments.Remove(ip);
                 }
+                account.registeredPayments = null;
+                account.issuedPayments = null;
+                
                 db.Accounts.Remove(account);
                 db.SaveChanges();
-                //DbCustomer currentCustomer = db.Customers.FirstOrDefault(c => c.NID.Equals(nid));
-                System.Diagnostics.Debug.WriteLine("DAL: Kunde NID: " + nid);
                 List<Account> remainingAccounts = db.Accounts.Where(a => a.NID.Equals(nid)).Select(a => new Account()
                 {
                     accountNumber = a.accountNumber,
                     balance = a.balance
                 })
                 .ToList();
-                System.Diagnostics.Debug.WriteLine("DAL: SLETT ACCOUNT RESTERENDE KONTOER: " + remainingAccounts.Count());
                 return remainingAccounts;
             }
             catch (Exception e)
@@ -846,7 +845,6 @@ namespace DAL
 
         public List<Customer> deleteCustomer(string nID)
         {
-            //System.Diagnostics.Debug.WriteLine("DAL PARAMETER TEST: " + nID);
             var db = new BankDBContext();
             try
             {
@@ -866,12 +864,15 @@ namespace DAL
                     foreach (DbRegisteredPayment rp in registeredPayments)
                     {
                         db.RegisteredPayments.Remove(rp);
+                        db.SaveChanges();
                     }
                     foreach (DbIssuedPayment ip in issuedPayments)
                     {
                         db.IssuedPayments.Remove(ip);
+                        db.SaveChanges();
                     }
                     db.Accounts.Remove(account);
+                    db.SaveChanges();
                 }
 
                 db.Customers.Remove(deleteCustomer);

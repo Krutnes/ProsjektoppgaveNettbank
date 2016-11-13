@@ -281,11 +281,11 @@ namespace ProsjektoppgaveNettbank.Controllers
         {
             var BankAdminBLL = new BankAdminBLL();
             List<Account> remainingAccounts = BankAdminBLL.adminDeleteAccount(accountNumber);
-            System.Diagnostics.Debug.WriteLine("KOMMER HIT: " + remainingAccounts.Count);
             foreach (Account i in remainingAccounts)
                 System.Diagnostics.Debug.WriteLine(i.accountNumber + "\n");
             var jsonSerializer = new JavaScriptSerializer();
             return jsonSerializer.Serialize(remainingAccounts);
+            
         }
 
         public string AdminDeleteCustomer(string id)
