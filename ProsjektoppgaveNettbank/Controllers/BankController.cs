@@ -99,6 +99,7 @@ namespace ProsjektoppgaveNettbank.Controllers
                 {
                     var bankBLL = new BankCustomerBLL();
                     RegisteredPayment payment = bankBLL.findRegisteredPayment(Convert.ToInt32(id));
+                    System.Diagnostics.Debug.WriteLine("TEST VIEW: " + payment.cutomerAccountNumber);
                     return View(payment);
                 }
             }
