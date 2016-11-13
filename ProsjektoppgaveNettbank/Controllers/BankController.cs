@@ -41,11 +41,32 @@ namespace ProsjektoppgaveNettbank.Controllers
             }
             return View();
         }
-
+        /*
         [HttpPost]
         public ActionResult BankIndex(Customer customer)
         {
             System.Diagnostics.Debug.WriteLine("TEST " + customer.firstName);
+            var bankBLL = new BankCustomerBLL();
+            if (bankBLL.isLoginCorrect(customer))
+            {
+                Session["LoggedIn"] = true;
+                Session["NID"] = customer.nID;
+                return RedirectToAction("AccountOverview", "Bank");
+            }
+            Session["LoggedIn"] = false;
+            ViewBag.LoggedIn = false;
+            return View();
+        }
+        */
+
+        public ActionResult CustomerLogin()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CustomerLogin(Customer customer)
+        {
             var bankBLL = new BankCustomerBLL();
             if (bankBLL.isLoginCorrect(customer))
             {

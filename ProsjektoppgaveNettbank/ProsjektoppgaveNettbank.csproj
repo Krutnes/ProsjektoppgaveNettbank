@@ -160,6 +160,7 @@
     <Content Include="Views\Bank\AdminPaymentOverview.cshtml" />
     <Content Include="Views\Bank\AdminRegisterCustomer.cshtml" />
     <Content Include="Views\Bank\AdminEditAccount.cshtml" />
+    <Content Include="Views\Bank\CustomerLogin.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
