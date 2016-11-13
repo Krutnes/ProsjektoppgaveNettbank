@@ -303,14 +303,14 @@ namespace ProsjektoppgaveNettbank.Controllers
         [HttpPost]
         public ActionResult AdminEditAccount(Account account)
         {
-
+            System.Diagnostics.Debug.WriteLine("TEST BALANCE MOTHERFUCKER" + account.balance);
             var bankBLL = new BankAdminBLL();
             if (!bankBLL.adminEditAccount(account, (string)Session["AccountNumber"]))
             {
                 return View(account);
             }
             string nid = bankBLL.findAccount(account.accountNumber).nID;
-            System.Diagnostics.Debug.Write("TEST nid" + nid);
+            
             return Redirect("/Bank/AdminCustomerDetails/?nid=" + nid);
         }
 
