@@ -35,6 +35,7 @@ namespace Models
 
     public class Account
     {
+        public int id { get; set; }
         [RegularExpression("[\\d]{11}")]
         [Required(ErrorMessage = "Account number must be 11 digits")]
         public string accountNumber { get; set; }
@@ -45,11 +46,11 @@ namespace Models
     public class RegisteredPayment
     {
         public int id { get; set; }
-        public string accountNumberFrom { get; set; }
+        public string cutomerAccountNumber { get; set; }
         [Display(Name = "Receiver account:")]
         [Required(ErrorMessage = "Receiver account must be present")]
         [RegularExpression("[\\d]{11}", ErrorMessage = "Account must be 11 digits.")]
-        public string accountNumberTo { get; set; }
+        public string targetAccountNumber { get; set; }
         [Display(Name = "Receipient name:")]
         [Required(ErrorMessage = "Receipient name must be present")]
         public string receiverName { get; set; }
@@ -69,8 +70,8 @@ namespace Models
     public class IssuedPayment
     {
         //public int id { get; set; }
-        public string accountNumberFrom { get; set; }
-        public string accountNumberTo { get; set; }
+        public string cutomerAccountNumber { get; set; }
+        public string targetAccountNumber { get; set; }
         public string receiverName { get; set; }
         public double amount { get; set; }
         public DateTime issuedDate { get; set; }

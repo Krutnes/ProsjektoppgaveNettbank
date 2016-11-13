@@ -20,6 +20,8 @@ namespace ProsjektoppgaveNettbank.Controllers
                 bool loggedIn = (bool)Session["LoggedIn"];
                 if (loggedIn)
                 {
+                    BankCustomerBLL bll = new BankCustomerBLL();
+                    bll.updatePendingPayments();
                     return View();
                 }
             }
@@ -150,8 +152,10 @@ namespace ProsjektoppgaveNettbank.Controllers
                 Session["accountNumber"] = null;
                 return RedirectToAction("BankIndex", "Bank");
             }
-            registeredPayment.accountNumberFrom = (string)Session["accountNumber"];
+            registeredPayment.cutomerAccountNumber = (string)Session["accountNumber"];
             var bankBLL = new BankCustomerBLL();
+            registeredPayment.amount = -((double)registeredPayment.amount);
+            
             if (!bankBLL.registerPayment(registeredPayment))
                 return RedirectToAction("RegisterSinglePayment", "Bank");
             Session["accountNumber"] = null;
@@ -228,6 +232,8 @@ namespace ProsjektoppgaveNettbank.Controllers
             return RedirectToAction("AdminOverview", "Bank");
         }
 
+
+
         public ActionResult AdminLogin()
         {
             if (Session["AdminLoggedIn"] != null && (bool)Session["AdminLoggedIn"])
@@ -262,6 +268,28 @@ namespace ProsjektoppgaveNettbank.Controllers
             }
             Session["AdminLoggedIn"] = null;
             return RedirectToAction("AdminLogin", "Bank");
+        }
+
+        public ActionResult AdminEditAccount(string accNumber)
+        {
+            var bankBLL = new BankAdminBLL();
+            Account account = bankBLL.findAccount(accNumber);
+            Session["AccountNumber"] = (string)accNumber;
+            return View(account);
+        }
+
+        [HttpPost]
+        public ActionResult AdminEditAccount(Account account)
+        {
+
+            var bankBLL = new BankAdminBLL();
+            if (!bankBLL.adminEditAccount(account, (string)Session["AccountNumber"]))
+            {
+                return View(account);
+            }
+            string nid = bankBLL.findAccount(account.accountNumber).nID;
+            System.Diagnostics.Debug.Write("TEST nid" + nid);
+            return Redirect("/Bank/AdminCustomerDetails/?nid=" + nid);
         }
 
         public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
