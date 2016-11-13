@@ -572,12 +572,13 @@ namespace DAL
             }
         }
 
-        public void processRegisteredPayment(DbRegisteredPayment payment)
+        public void processRegisteredPayment(int id)
         {
             using (var db = new BankDBContext())
             {
                 try
                 {
+                    DbRegisteredPayment payment = db.RegisteredPayments.Find(id);
                     DbAccount customerAccount = db.Accounts.FirstOrDefault(
                         a => a.accountNumber.Equals(payment.customerAccountNumber));
                     DbAccount targetAccount = db.Accounts.FirstOrDefault(
@@ -610,6 +611,39 @@ namespace DAL
             }
         }
 
+        public bool registerDirectPayment(IssuedPayment payment)
+        {
+            using (var db = new BankDBContext())
+            {
+                try
+                {
+                    db.IssuedPayments.Add(new DbIssuedPayment()
+                    {
+                        customerAccountNumber = payment.cutomerAccountNumber,
+                        targetAccountNumber = payment.targetAccountNumber,
+                        amount = payment.amount,
+                        customerAccountNumberFK = db.Accounts.FirstOrDefault(
+                            a => a.accountNumber.Equals(payment.cutomerAccountNumber)),
+                        issuedDate = payment.issuedDate,
+                        receiverName = payment.receiverName
+                    });
+                    DbAccount targetAccount = db.Accounts.FirstOrDefault(
+                        a => a.accountNumber.Equals(payment.targetAccountNumber));
+                    targetAccount.balance -= payment.amount;
+                    DbAccount customerAccount = db.Accounts.FirstOrDefault(
+                        a => a.accountNumber.Equals(payment.cutomerAccountNumber));
+                    customerAccount.balance += payment.amount;
+                    db.SaveChanges();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    errorReport(e.ToString());
+                    return false;
+                }
+            }
+        }
+
         public bool registerPayment(RegisteredPayment payment)
         {
             using (var db = new BankDBContext())
@@ -621,16 +655,17 @@ namespace DAL
                         customerAccountNumber = payment.cutomerAccountNumber,
                         targetAccountNumber = payment.targetAccountNumber,
                         amount = payment.amount,
-                        customerAccountNumberFK = db.Accounts.Find(payment.cutomerAccountNumber),
+                        customerAccountNumberFK = db.Accounts.FirstOrDefault(
+                            a => a.accountNumber.Equals(payment.cutomerAccountNumber)),
                         paymentDate = payment.paymentDate,
                         receiverName = payment.receiverName
                     });
                     db.SaveChanges();
-                    // ADD LOG ENTRY
                     return true;
                 }
                 catch (Exception e)
                 {
+                    errorReport(e.ToString());
                     return false;
                 }
             }
@@ -646,9 +681,9 @@ namespace DAL
                     foreach (DbRegisteredPayment currentPayment in pendingPayments)
                     {
                         DateTime date = currentPayment.paymentDate;
-                        if (date < DateTime.Today)
+                        if (date <= DateTime.Today)
                         {
-                            processRegisteredPayment(currentPayment);
+                            processRegisteredPayment(currentPayment.id);
                         }
                     }
                 }

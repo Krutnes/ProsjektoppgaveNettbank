@@ -161,7 +161,7 @@ namespace ProsjektoppgaveNettbank.Controllers
             return View();
         }
 
-        public ActionResult RegisterSinglePayment(string id)
+        public ActionResult RegisterSinglePayment(string id) // id = account number
         {
             if (Session["LoggedIn"] != null)
             {
@@ -186,17 +186,57 @@ namespace ProsjektoppgaveNettbank.Controllers
                 Session["accountNumber"] = null;
                 return RedirectToAction("BankIndex", "Bank");
             }
+            BankCustomerBLL bll = new BankCustomerBLL();
+
             registeredPayment.cutomerAccountNumber = (string)Session["accountNumber"];
             var bankBLL = new BankCustomerBLL();
-            registeredPayment.amount = -((double) registeredPayment.amount);
             
+            registeredPayment.amount = -((double) registeredPayment.amount);
+
             if (!bankBLL.registerPayment(registeredPayment))
                 return RedirectToAction("RegisterSinglePayment", "Bank");
             Session["accountNumber"] = null;
             return RedirectToAction("AccountOverview", "Bank");
         }
 
-        // GJØR SESSION OG DELING AV ADMIN/KUNDE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        public ActionResult RegisterDirectPayment(string id)
+        {
+            if (Session["LoggedIn"] != null)
+            {
+                bool loggedIn = (bool)Session["LoggedIn"];
+                if (loggedIn)
+                {
+                    Session["accountNumber"] = id;
+                    return View();
+                }
+            }
+            Session["LoggedIn"] = null;
+            return RedirectToAction("BankIndex", "Bank");
+        }
+
+        [HttpPost]
+        public ActionResult RegisterDirectPayment(IssuedPayment issuedPayment)
+        {
+            
+            if (Session["LoggedIn"] == null)
+            {
+                Session["LoggedIn"] = null;
+                Session["accountNumber"] = null;
+                return RedirectToAction("BankIndex", "Bank");
+            }
+            issuedPayment.cutomerAccountNumber = (string)Session["accountNumber"];
+            var bankBLL = new BankCustomerBLL();
+            issuedPayment.amount = -((double)issuedPayment.amount);
+            issuedPayment.issuedDate = DateTime.Now;
+
+            if (!bankBLL.registerDirectPayment(issuedPayment))
+                return RedirectToAction("RegisterDirectPayment", "Bank");
+
+            Session["accountNumber"] = null;
+            
+            return RedirectToAction("AccountOverview", "Bank");
+        }
+
 
         public string AdminCreateNewAccount(string nid)
         {

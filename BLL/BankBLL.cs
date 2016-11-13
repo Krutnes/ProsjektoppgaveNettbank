@@ -77,6 +77,12 @@ namespace BLL
             db.populatePaymentTables();
         }
 
+        public bool registerDirectPayment(IssuedPayment payment)
+        {
+            BankCustomerDAL db = new BankCustomerDAL();
+            return db.registerDirectPayment(payment);
+        }
+
         public bool registerPayment(RegisteredPayment payment)
         {
             BankCustomerDAL db = new BankCustomerDAL();
