@@ -12,7 +12,7 @@ namespace DAL
     {
         public bool adminEditAccount(Account account, string oldAccountNumber)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool adminEditCustomer(Customer customer)
