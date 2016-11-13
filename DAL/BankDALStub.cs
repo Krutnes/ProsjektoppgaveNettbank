@@ -97,7 +97,15 @@ namespace DAL
 
         List<Customer> IBankAdminDAL.deleteCustomer(string nID)
         {
-            
+            if (nID == null)
+            {
+                return "a";
+            }
+            else
+            {
+                return false;
+            }
+        }
             throw new NotImplementedException();
         }
 

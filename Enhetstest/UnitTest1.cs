@@ -30,7 +30,7 @@ namespace UnitTest
             // Assert
             Assert.AreEqual(result.RouteName, "");
             Assert.AreEqual(result.RouteValues.Values.First(), "AdminOverview");
-        }  
+        }
 
         public void isAdminLoginCorrect()
         {
@@ -48,6 +48,23 @@ namespace UnitTest
             // Assert
             Assert.AreEqual(actionResult.RouteValues.Values.First(), "AdminOverview", "Bank");
         }
+        [TestMethod]
+        public void adminDeleteCustomer()
+        {
+            // Arrange
+            var controller = new BankController(new BankAdminBLL(new BankDALStub()));
+            var delCust = new Customer()
+            {
+                nID = null
+            };
+
+            // Act
+            var actionResult = (ViewResult)controller.AdminDeleteCustomer(delCust);
+            var resultat = (Customer)actionResult.Model;
+
+            // Assert
+            Assert.AreEqual(actionResult.ViewName, "");
+        }
 
         /*    public void errorReport()
             {
@@ -60,17 +77,6 @@ namespace UnitTest
 
             } */
 
-        public void adminDeleteCustomer()
-        {
-            // Arrange
-            var controller = new BankController(new BankAdminBLL(new BankDALStub()));
 
-            // Act
-            var actionResult = (ViewResult)controller.AdminDeleteCustomer(1);
-            var resultat = (Customer)actionResult.Model;
-
-            // Assert
-            Assert.AreEqual(actionResult.ViewName, "");
-        }
     }
 }
