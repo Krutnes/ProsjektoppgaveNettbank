@@ -1,8 +1,10 @@
 ﻿using Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace DAL
@@ -23,7 +25,7 @@ namespace DAL
                 }
                 catch (Exception e)
                 {
-                    errorReport(e.ToString());
+                    
                     return false;
                 }
             }
@@ -48,12 +50,14 @@ namespace DAL
             }
         }
 
-        public void errorReport(string error)
+        public static void errorReport(string e)
         {
-            string path = Environment.CurrentDirectory + @"\ErrorLog";
-            DateTime CurrentTime = DateTime.Now;
-            string[] lines = { CurrentTime + "  " + error };
-            System.IO.File.AppendAllLines(path + DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".txt", lines);
+
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ErrorLog.txt");
+            DateTime currentTime = DateTime.Now;
+            string[] lines = { "Error at " + currentTime + ":\n" + e.ToString() + 
+                    "\n_________________________________\n"};
+            System.IO.File.AppendAllLines(path, lines);
         }
 
         public RegisteredPayment findRegisteredPayment(int id)
@@ -79,7 +83,7 @@ namespace DAL
                 }
                 catch (Exception e)
                 {
-                    errorReport(e.ToString());
+                    
                     return null;
                 }
             }
@@ -128,7 +132,7 @@ namespace DAL
             }
             catch (Exception e)
             {
-                errorReport(e.ToString());
+               
                 return null;
             }
         }
@@ -180,7 +184,6 @@ namespace DAL
                 }
                 catch (Exception e)
                 {
-                    errorReport(e.ToString());
                     return null;
                 }
             }
@@ -211,6 +214,7 @@ namespace DAL
                 catch (Exception e)
                 {
                     errorReport(e.ToString());
+                    return false;
                 }
                 return false;
             }
@@ -447,17 +451,25 @@ namespace DAL
         {
             using (var db = new BankDBContext())
             {
-                List<DbRegisteredPayment> pendingPayments =
-                    db.RegisteredPayments.ToList();
-                
-                //System.Diagnostics.Debug.WriteLine("DAL: registeredpayments: " + pendingPayments.Count());
-                foreach (DbRegisteredPayment currentPayment in pendingPayments)
+                try
                 {
-                    DateTime date = currentPayment.paymentDate;
-                    if(date < DateTime.Now)
+                    List<DbRegisteredPayment> pendingPayments =
+                    db.RegisteredPayments.ToList();
+
+                    //System.Diagnostics.Debug.WriteLine("DAL: registeredpayments: " + pendingPayments.Count());
+                    foreach (DbRegisteredPayment currentPayment in pendingPayments)
                     {
-                        processRegisteredPayment(currentPayment);
+                        DateTime date = currentPayment.paymentDate;
+                        if (date < DateTime.Now)
+                        {
+                            processRegisteredPayment(currentPayment);
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    errorReport(e.ToString());
+                    return;
                 }
             }
         }
@@ -466,65 +478,81 @@ namespace DAL
         {
             using (var db = new BankDBContext())
             {
-                DbAccount customerAccount = db.Accounts.FirstOrDefault(
-                    a => a.accountNumber.Equals(payment.customerAccountNumber));
-                DbAccount targetAccount = db.Accounts.FirstOrDefault(
-                    a => a.accountNumber.Equals(payment.targetAccountNumber));
-                DbIssuedPayment ip = new DbIssuedPayment()
+                try
                 {
-                    customerAccountNumber = payment.customerAccountNumber,
-                    targetAccountNumber = payment.targetAccountNumber,
-                    receiverName = payment.receiverName,
-                    amount = payment.amount,
-                    issuedDate = DateTime.Now,
-                    customerAccountNumberFK = customerAccount
-                };
-                if (targetAccount != null)
-                    ip.targetAccountNumberFK = targetAccount;
-                db.IssuedPayments.Add(ip);
+                    DbAccount customerAccount = db.Accounts.FirstOrDefault(
+                        a => a.accountNumber.Equals(payment.customerAccountNumber));
+                    DbAccount targetAccount = db.Accounts.FirstOrDefault(
+                        a => a.accountNumber.Equals(payment.targetAccountNumber));
+                    DbIssuedPayment ip = new DbIssuedPayment()
+                    {
+                        customerAccountNumber = payment.customerAccountNumber,
+                        targetAccountNumber = payment.targetAccountNumber,
+                        receiverName = payment.receiverName,
+                        amount = payment.amount,
+                        issuedDate = DateTime.Now,
+                        customerAccountNumberFK = customerAccount
+                    };
+                    if (targetAccount != null)
+                        ip.targetAccountNumberFK = targetAccount;
+                    db.IssuedPayments.Add(ip);
 
-                DbRegisteredPayment test = db.RegisteredPayments.FirstOrDefault(rp => rp.id == payment.id);
-                db.RegisteredPayments.Remove(test);
+                    DbRegisteredPayment test = db.RegisteredPayments.FirstOrDefault(rp => rp.id == payment.id);
+                    db.RegisteredPayments.Remove(test);
 
-                customerAccount.balance += payment.amount;
-                db.Entry(customerAccount).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
+                    customerAccount.balance += payment.amount;
+                    db.Entry(customerAccount).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    errorReport(e.ToString());
+                    return;
+                }
             }
         }
     }
 
     public class BankAdminDAL
     {
-        public bool adminEditAccount(Account account, string oldAccountNumber) // LOG PLEASE
+        public bool adminEditAccount(Account account, string oldAccountNumber) 
         {
             using (var db = new BankDBContext())
             {
-                DbAccount dbaccount = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(oldAccountNumber));
-                System.Diagnostics.Debug.WriteLine("TEST DAL ACCOUNT: " + dbaccount.accountNumber);
+                try
+                {
+                    DbAccount dbaccount = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(oldAccountNumber));
+                    System.Diagnostics.Debug.WriteLine("TEST DAL ACCOUNT: " + dbaccount.accountNumber);
 
-                //customerAccountNumber from DbIssuedPayments
-                IEnumerable<DbIssuedPayment> issuedPayments = db.IssuedPayments
-                   .Where(ip => ip.customerAccountNumber.Equals(oldAccountNumber)).ToList();
-                foreach (DbIssuedPayment dbip in issuedPayments)
-                {
-                    dbip.customerAccountNumber = account.accountNumber;
-                    db.SaveChanges();
-                }
-                //customerAccountNumber from DbRegisteredPayments 
-                IEnumerable<DbRegisteredPayment> registeredPayments = db.RegisteredPayments
-                    .Where(rp => rp.customerAccountNumber.Equals(oldAccountNumber)).ToList();
-                foreach (DbRegisteredPayment dbrp in registeredPayments)
-                {
-                    dbrp.customerAccountNumber = account.accountNumber;
-                    db.SaveChanges();
-                }
+                    //customerAccountNumber from DbIssuedPayments
+                    IEnumerable<DbIssuedPayment> issuedPayments = db.IssuedPayments
+                       .Where(ip => ip.customerAccountNumber.Equals(oldAccountNumber)).ToList();
+                    foreach (DbIssuedPayment dbip in issuedPayments)
+                    {
+                        dbip.customerAccountNumber = account.accountNumber;
+                        db.SaveChanges();
+                    }
+                    //customerAccountNumber from DbRegisteredPayments 
+                    IEnumerable<DbRegisteredPayment> registeredPayments = db.RegisteredPayments
+                        .Where(rp => rp.customerAccountNumber.Equals(oldAccountNumber)).ToList();
+                    foreach (DbRegisteredPayment dbrp in registeredPayments)
+                    {
+                        dbrp.customerAccountNumber = account.accountNumber;
+                        db.SaveChanges();
+                    }
 
-                if (dbaccount != null)
+                    if (dbaccount != null)
+                    {
+                        dbaccount.accountNumber = account.accountNumber;
+                        dbaccount.balance = account.balance;
+                        db.SaveChanges();
+                        return true;
+                    }
+                }
+                catch (Exception e)
                 {
-                    dbaccount.accountNumber = account.accountNumber;
-                    dbaccount.balance = account.balance;
-                    db.SaveChanges();
-                    return true;
+                    BankCustomerDAL.errorReport(e.ToString());
+                    return false;
                 }
                 return false;
             }
@@ -533,18 +561,26 @@ namespace DAL
         {
             using (var db = new BankDBContext())
             {
-                DbCustomer dbcustomer = db.Customers.FirstOrDefault(c => c.NID == customer.nID);
-                if (dbcustomer != null)
+                try
                 {
-                    dbcustomer.firstName = customer.firstName;
-                    dbcustomer.lastName = customer.lastName;
-                    string salt = BankCustomerDAL.generateSalt();
-                    string passwordAndSalt = customer.password + salt;
-                    byte[] hashedpassword = BankCustomerDAL.generateHash(passwordAndSalt);
-                    dbcustomer.password = hashedpassword;
-                    dbcustomer.salt = salt;
-                    db.SaveChanges();
-                    return true;
+                    DbCustomer dbcustomer = db.Customers.FirstOrDefault(c => c.NID == customer.nID);
+                    if (dbcustomer != null)
+                    {
+                        dbcustomer.firstName = customer.firstName;
+                        dbcustomer.lastName = customer.lastName;
+                        string salt = BankCustomerDAL.generateSalt();
+                        string passwordAndSalt = customer.password + salt;
+                        byte[] hashedpassword = BankCustomerDAL.generateHash(passwordAndSalt);
+                        dbcustomer.password = hashedpassword;
+                        dbcustomer.salt = salt;
+                        db.SaveChanges();
+                        return true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    BankCustomerDAL.errorReport(e.ToString());
+                    return false;
                 }
                 return false;
             }
@@ -552,57 +588,76 @@ namespace DAL
 
         public bool adminRegisterCustomer(Customer inCustomer)
         {
-            var newCustomer = new DbCustomer()
+            try
             {
 
-                firstName = inCustomer.firstName,
-                lastName = inCustomer.lastName,
-                NID = inCustomer.nID
 
-            };
+                var newCustomer = new DbCustomer()
+                {
 
-            var db = new BankDBContext();
-            string salt = BankCustomerDAL.generateSalt();
-            string passwordAndSalt = inCustomer.password + salt;
-            byte[] hashedpassword = BankCustomerDAL.generateHash(passwordAndSalt);
-            newCustomer.password = hashedpassword;
-            newCustomer.salt = salt;
-            db.Customers.Add(newCustomer);
-            db.SaveChanges();
-            return true;
+                    firstName = inCustomer.firstName,
+                    lastName = inCustomer.lastName,
+                    NID = inCustomer.nID
+
+                };
+
+                var db = new BankDBContext();
+                string salt = BankCustomerDAL.generateSalt();
+                string passwordAndSalt = inCustomer.password + salt;
+                byte[] hashedpassword = BankCustomerDAL.generateHash(passwordAndSalt);
+                newCustomer.password = hashedpassword;
+                newCustomer.salt = salt;
+                db.Customers.Add(newCustomer);
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                BankCustomerDAL.errorReport(e.ToString());
+                return false;
+            }
         }
 
         public List<Account> deleteAccount(string accountNumber)
         {
-            var db = new BankDBContext();
+            try
+            {
 
-            DbAccount account = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(accountNumber));
-            string nid = account.NID;
-            IEnumerable<DbRegisteredPayment> registeredPayments = db.RegisteredPayments.
-                Where(rp => rp.customerAccountNumber.Equals(account.accountNumber)).ToList();
+                var db = new BankDBContext();
 
-            foreach (DbRegisteredPayment rp in registeredPayments)
-            {
-                db.RegisteredPayments.Remove(rp);
+                DbAccount account = db.Accounts.FirstOrDefault(a => a.accountNumber.Equals(accountNumber));
+                string nid = account.NID;
+                IEnumerable<DbRegisteredPayment> registeredPayments = db.RegisteredPayments.
+                    Where(rp => rp.customerAccountNumber.Equals(account.accountNumber)).ToList();
+
+                foreach (DbRegisteredPayment rp in registeredPayments)
+                {
+                    db.RegisteredPayments.Remove(rp);
+                }
+                IEnumerable<DbIssuedPayment> issuedPayments = db.IssuedPayments.
+                    Where(ip => ip.customerAccountNumber.Equals(account.accountNumber)).ToList();
+                foreach (DbIssuedPayment ip in issuedPayments)
+                {
+                    db.IssuedPayments.Remove(ip);
+                }
+                db.Accounts.Remove(account);
+                db.SaveChanges();
+                //DbCustomer currentCustomer = db.Customers.FirstOrDefault(c => c.NID.Equals(nid));
+                System.Diagnostics.Debug.WriteLine("DAL: Kunde NID: " + nid);
+                List<Account> remainingAccounts = db.Accounts.Where(a => a.NID.Equals(nid)).Select(a => new Account()
+                {
+                    accountNumber = a.accountNumber,
+                    balance = a.balance
+                })
+                .ToList();
+                System.Diagnostics.Debug.WriteLine("DAL: SLETT ACCOUNT RESTERENDE KONTOER: " + remainingAccounts.Count());
+                return remainingAccounts;
             }
-            IEnumerable<DbIssuedPayment> issuedPayments = db.IssuedPayments.
-                Where(ip => ip.customerAccountNumber.Equals(account.accountNumber)).ToList();
-            foreach (DbIssuedPayment ip in issuedPayments)
+            catch (Exception e)
             {
-                db.IssuedPayments.Remove(ip);
+                BankCustomerDAL.errorReport(e.ToString());
+                return null;
             }
-            db.Accounts.Remove(account);
-            db.SaveChanges();
-            //DbCustomer currentCustomer = db.Customers.FirstOrDefault(c => c.NID.Equals(nid));
-            System.Diagnostics.Debug.WriteLine("DAL: Kunde NID: " + nid);
-            List<Account> remainingAccounts = db.Accounts.Where(a => a.NID.Equals(nid)).Select(a => new Account()
-            {
-                accountNumber = a.accountNumber,
-                balance = a.balance
-            })
-            .ToList();
-            System.Diagnostics.Debug.WriteLine("DAL: SLETT ACCOUNT RESTERENDE KONTOER: " + remainingAccounts.Count());
-            return remainingAccounts;
         }
 
         public List<Customer> deleteCustomer(string nID)
@@ -645,54 +700,71 @@ namespace DAL
                 })
                 .ToList();
             }
-            catch (Exception feil)
+            catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("DB ERROR: " + feil.ToString());
+                BankCustomerDAL.errorReport(e.ToString());
                 return null;
             }
+        
         }
 
         public Account findAccount(string accNumber)
         {
             var db = new BankDBContext();
+            try
+            {
 
-            var foundAccount = db.Accounts.FirstOrDefault(pk => pk.accountNumber.Equals(accNumber));
-            System.Diagnostics.Debug.WriteLine("TEST DAL FINDACCOUNT: " + foundAccount.accountNumber);
-            if (foundAccount == null)
-            {
-                return null;
-            }
-            else
-            {
-                var account = new Account()
+                var foundAccount = db.Accounts.FirstOrDefault(pk => pk.accountNumber.Equals(accNumber));
+                System.Diagnostics.Debug.WriteLine("TEST DAL FINDACCOUNT: " + foundAccount.accountNumber);
+                if (foundAccount == null)
                 {
-                    accountNumber = foundAccount.accountNumber,
-                    balance = foundAccount.balance,
-                    nID = foundAccount.NID
-                };
-                return account;
+                    return null;
+                }
+                else
+                {
+                    var account = new Account()
+                    {
+                        accountNumber = foundAccount.accountNumber,
+                        balance = foundAccount.balance,
+                        nID = foundAccount.NID
+                    };
+                    return account;
+                }
+            }
+            catch (Exception e)
+            {
+                BankCustomerDAL.errorReport(e.ToString());
+                return null;
             }
         }
 
         public Customer findCustomer(string nID)
         {
             var db = new BankDBContext();
-
-            var foundCustomer = db.Customers.FirstOrDefault(pk => pk.NID.Equals(nID));
-
-            if (foundCustomer == null)
+            try
             {
-                return null;
-            }
-            else
-            {
-                var customer = new Customer()
+
+                var foundCustomer = db.Customers.FirstOrDefault(pk => pk.NID.Equals(nID));
+
+                if (foundCustomer == null)
                 {
-                    nID = foundCustomer.NID,
-                    firstName = foundCustomer.firstName,
-                    lastName = foundCustomer.lastName
-                };
-                return customer;
+                    return null;
+                }
+                else
+                {
+                    var customer = new Customer()
+                    {
+                        nID = foundCustomer.NID,
+                        firstName = foundCustomer.firstName,
+                        lastName = foundCustomer.lastName
+                    };
+                    return customer;
+                }
+            }
+            catch (Exception e)
+            {
+                BankCustomerDAL.errorReport(e.ToString());
+                return null;
             }
         }
 
@@ -700,13 +772,21 @@ namespace DAL
         {
             using (var db = new BankDBContext())
             {
-                List<Customer> alleKunder = db.Customers.Select(k => new Customer()
+                try
                 {
-                    nID = k.NID,
-                    firstName = k.firstName,
-                    lastName = k.lastName
-                }).ToList();
-                return alleKunder;
+                    List<Customer> alleKunder = db.Customers.Select(k => new Customer()
+                    {
+                        nID = k.NID,
+                        firstName = k.firstName,
+                        lastName = k.lastName
+                    }).ToList();
+                    return alleKunder;
+                }
+                catch (Exception e)
+                {
+                    BankCustomerDAL.errorReport(e.ToString());
+                    return null;
+                }
             }
         }
 
@@ -728,14 +808,22 @@ namespace DAL
         {
             using (var db = new BankDBContext())
             {
-                DbAdmin adminFound = db.Admins.FirstOrDefault(c => c.ID.Equals(admin.ID));
-                if (adminFound != null)
+                try
                 {
-                    byte[] checkPassword = BankCustomerDAL.generateHash(admin.adminPassword + adminFound.adminsalt);
-                    bool validAdmin = adminFound.adminpassword.SequenceEqual(checkPassword);
-                    return validAdmin;
+                    DbAdmin adminFound = db.Admins.FirstOrDefault(c => c.ID.Equals(admin.ID));
+                    if (adminFound != null)
+                    {
+                        byte[] checkPassword = BankCustomerDAL.generateHash(admin.adminPassword + adminFound.adminsalt);
+                        bool validAdmin = adminFound.adminpassword.SequenceEqual(checkPassword);
+                        return validAdmin;
+                    }
+                    return false;
                 }
-                return false;
+                catch (Exception e)
+                {
+                    BankCustomerDAL.errorReport(e.ToString());
+                    return false;
+                }
             }
         }
 
@@ -770,8 +858,9 @@ namespace DAL
             }
             catch (Exception e)
             {
+                BankCustomerDAL.errorReport(e.ToString());
                 return null;
+            }
             }
         }
     }
-}
