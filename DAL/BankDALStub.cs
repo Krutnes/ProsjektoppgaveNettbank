@@ -10,6 +10,16 @@ namespace DAL
 {
     public class BankDALStub : DAL.IBankAdminDAL 
     {
+        public bool adminEditAccount(Account account, string oldAccountNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool adminEditCustomer(Customer customer)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool adminRegisterCustomer(Customer inCustomer)
         {
             if(inCustomer.firstName == "")
@@ -21,6 +31,36 @@ namespace DAL
                 return true;
             }
 
+        }
+
+        public List<Account> deleteAccount(string accountNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Customer> deleteCustomer(string nID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Account findAccount(string accNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Customer findCustomer(string nID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string generateBankAccountNumber()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Customer> getAllCustomers()
+        {
+            throw new NotImplementedException();
         }
 
         public bool isAdminLoginCorrect(Admin admin)

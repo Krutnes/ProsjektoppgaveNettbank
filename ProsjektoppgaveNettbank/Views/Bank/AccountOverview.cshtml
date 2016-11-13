@@ -21,17 +21,19 @@
 
             $("#accountsDropdown").change(function ()
             {
-                var accountNumberID = $(this).val();
-                var url = "/Bank/RegisterSinglePayment/" + accountNumberID;
-                $("#register_single_payment").attr("href", url);
-                $("#register_single_payment").css("background-color", "#2780E3");
+                var accountNumber = $(this).val();
+                var url = "/Bank/RegisterSinglePayment/" + accountNumber;
+                $("#register_future_payment").attr("href", url);
+                $("#register_future_payment").css("background-color", "#2780E3");
+                url = "/Bank/RegisterDirectPayment/" + accountNumber;
+                $("#register_direct_payment").attr("href", url);
+                $("#register_direct_payment").css("background-color", "#2780E3");
                 $.ajax({
-                    url: '/Bank/getRegisteredPayments/' + accountNumberID,
+                    url: '/Bank/getRegisteredPayments/' + accountNumber,
                     type: 'GET',
                     dataType: 'json',
                     success: function (registeredPayments)
                     {
-
                         ShowRegisteredPayments(registeredPayments);
                     },
                     error: function (x, y, z)
@@ -41,7 +43,7 @@
 
                 });
                 $.ajax({
-                    url: '/Bank/getIssuedPaymentsforOneAccount/?accountNumberID=' + accountNumberID,
+                    url: '/Bank/getIssuedPaymentsforOneAccount/?accountNumberID=' + accountNumber,
                     type: 'GET',
                     dataType: 'json',
                     success: function (issuedPayments) {
@@ -174,13 +176,20 @@
    </script>
 </head>
 <body>
+    <br />
+    <br />
+    <p>Choose Account :  </p>
     <select id="accountsDropdown"></select> 
+    <h4><b>Pending payments:</b></h4><br />
     <table id="registered_payments" class="table table-striped table-hover"></table>
-    <a href="" id="register_single_payment" bgcolor="grey" 
-       class="btn btn-success">Register single payment</a>
+    <a href="" id="register_future_payment" bgcolor="grey" 
+       class="btn btn-success">Register future payment</a>
+    <a href="" id="register_direct_payment" bgcolor="grey"
+       class="btn btn-success">Direct payment</a>
     <div id="delete-payment-confirm" title="Delete registered payment?" hidden>
         <p>Are you sure?</p>
     </div>
+    <h4><b>Transaction History:</b></h4><br />
     <table id="issued_payments_for_one_account" class="table table-striped table-hover"></table>
 </body>
 </html>

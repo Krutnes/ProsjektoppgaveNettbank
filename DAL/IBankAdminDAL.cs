@@ -7,7 +7,7 @@ namespace DAL
     {
         
         bool adminEditAccount(Account account, string oldAccountNumber);
-        bool adminEditCustomer(Customer customer); 
+        bool adminEditCustomer(Customer customer);
         bool adminRegisterCustomer(Customer inCustomer);
         
         List<Account> deleteAccount(string accountNumber);
@@ -15,8 +15,9 @@ namespace DAL
         Account findAccount(string accNumber);
         Customer findCustomer(string nID);
         List<Customer> getAllCustomers();
-        
+        string generateBankAccountNumber();
         bool isAdminLoginCorrect(Admin admin);
         List<Account> newAccount(string nID);
+
     }
 }
