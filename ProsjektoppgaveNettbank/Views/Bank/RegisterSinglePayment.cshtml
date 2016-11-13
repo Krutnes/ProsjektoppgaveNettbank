@@ -6,6 +6,8 @@
 
 <h2>Register new single payment</h2>
 
+
+
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
@@ -43,6 +45,7 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.paymentDate, new { htmlAttributes = new { @class = "form-control", placeholder = "Date:  01.01.1970" } })
                 @Html.ValidationMessageFor(model => model.paymentDate, "", new { @class = "text-danger" })
+                Payment will be executed at this date
             </div>
         </div>
 
