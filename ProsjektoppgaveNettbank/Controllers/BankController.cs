@@ -384,7 +384,6 @@ namespace ProsjektoppgaveNettbank.Controllers
             Session["AdminLoggedIn"] = null;
             return RedirectToAction("AdminLogin", "Bank");
         }
-
         
 
        public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
