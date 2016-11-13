@@ -11,12 +11,27 @@ namespace DAL
     {
         public bool adminEditAccount(Account account, string oldAccountNumber)
         {
-            throw new NotImplementedException();
+            if (oldAccountNumber == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool adminEditCustomer(Customer customer)
         {
-            throw new NotImplementedException();
+            if (customer == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            
         }
 
         public bool adminRegisterCustomer(Customer inCustomer)
