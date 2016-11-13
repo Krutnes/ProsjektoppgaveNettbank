@@ -384,28 +384,7 @@ namespace ProsjektoppgaveNettbank.Controllers
             Session["AdminLoggedIn"] = null;
             return RedirectToAction("AdminLogin", "Bank");
         }
-
-        public ActionResult AdminEditAccount(string accNumber)
-        {
-            var bankBLL = new BankAdminBLL();
-            Account account = bankBLL.findAccount(accNumber);
-            Session["AccountNumber"] = (string)accNumber;
-            return View(account);
-        }
-
-        [HttpPost]
-        public ActionResult AdminEditAccount(Account account)
-        {
-
-            var bankBLL = new BankAdminBLL();
-            if (!bankBLL.adminEditAccount(account, (string)Session["AccountNumber"]))
-            {
-                return View(account);
-            }
-            string nid = bankBLL.findAccount(account.accountNumber).nID;
-            System.Diagnostics.Debug.Write("TEST nid" + nid);
-            return Redirect("/Bank/AdminCustomerDetails/?nid=" + nid);
-        }
+        
 
        public ActionResult AdminRegisterCustomer() // REGEX NEEDED ::::::::::::::::::::::::::::::::::::::::::::::::
         {
