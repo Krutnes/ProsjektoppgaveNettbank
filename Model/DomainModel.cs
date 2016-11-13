@@ -69,7 +69,7 @@ namespace Models
 
     public class IssuedPayment
     {
-        //public int id { get; set; }
+        public int id { get; set; }
         public string cutomerAccountNumber { get; set; }
         public string targetAccountNumber { get; set; }
         public string receiverName { get; set; }
